@@ -50,3 +50,10 @@ class UserValidationSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+
+# Serializador para la respuesta de usuario
+class UserResponseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'user_type', 'date_joined', 'last_login']

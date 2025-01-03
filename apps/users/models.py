@@ -11,3 +11,5 @@ class CustomUser(AbstractUser):
     first_name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     user_type = models.CharField(max_length=255, choices=USER_CHOICES)
+    failed_login_attempts = models.IntegerField(default=0)
+    last_failed_login = models.DateTimeField(null=True, blank=True)
