@@ -118,11 +118,17 @@ def login(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def logout(request):
-    # Elimina el token del usuario autenticado
-    request.user.auth_token.delete()
+    # Obtener el usuario actual
+    user = request.user
 
-    # Actualiza la fecha de último inicio de sesión
-    request.user.last_login = timezone.now()
+    # Actualizar los campos
+    user.last_login = timezone.now()
+    
+    # Eliminar el token del usuario
+    user.auth_token.delete()
+    
+    # Guardar el usuario
+    user.save()
     
     # Respuesta de cierre de sesión exitoso
     return Response({
