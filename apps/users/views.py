@@ -129,3 +129,51 @@ def logout(request):
         'status': 'success',
         'message': 'User logged out successfully.'
     }, status=status.HTTP_200_OK)
+
+
+# Endpoint para actualizar los datos del usuario
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_user(request):
+    # Obtiene los datos enviados en la petición
+    user_validation_serializer = UserValidationSerializer(request.user, data=request.data, partial=True)
+
+    # Obtiene la validación del serializer
+    validation_error = serializer_validation(user_validation_serializer)
+
+    # Verifica la validación del serializer
+    if validation_error:
+        # Respuesta de error en la validación del serializer
+        return Response(
+            validation_error,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Guarda los datos actualizados del usuario
+    user_validation_serializer.save()
+
+    # Elimina el token del usuario autenticado
+    request.user.auth_token.delete()
+    
+    # Crea o actualiza el token del usuario
+    token, created = Token.objects.get_or_create(user=request.user)
+
+    # Configura el tiempo de expiración del token
+    token_expiration = timezone.now() + timedelta(days=3)
+
+    # Serializa los datos del usuario
+    user_response_serializer = UserResponseSerializer(request.user)
+
+    # Respuesta de éxito en la actualización de datos del usuario
+    return Response({
+        'status': 'success',
+        'message': 'User data updated successfully.',
+        'data': {
+            'token': {
+                'token_key': token.key,
+                'token_expiration': token_expiration.isoformat()
+            },
+            'user': user_response_serializer.data
+        }
+    }, status=status.HTTP_200_OK)
