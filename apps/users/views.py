@@ -1,4 +1,6 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -108,4 +110,22 @@ def login(request):
             },
             'user': user_response_serializer.data
         }
+    }, status=status.HTTP_200_OK)
+
+
+# Endpoint para el cierre de sesión de usuario
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def logout(request):
+    # Elimina el token del usuario autenticado
+    request.user.auth_token.delete()
+
+    # Actualiza la fecha de último inicio de sesión
+    request.user.last_login = timezone.now()
+    
+    # Respuesta de cierre de sesión exitoso
+    return Response({
+        'status': 'success',
+        'message': 'User logged out successfully.'
     }, status=status.HTTP_200_OK)
