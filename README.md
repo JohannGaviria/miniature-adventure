@@ -101,8 +101,9 @@ python manage.py runserver --settings=config.settings.development
 
 | Nombre | Método | URL | Descripción |
 |:------ | :----- | :-- | :---------- |
-| [Registro de usuario](#registro-de-usuario) | `POST` | `/api/users/sign_up` | Endpoint para el registro de usuarios en la API. |
+| [Registro de usuario](#registro-de-usuario) | `POST` | `/api/users/register` | Endpoint para el registro de usuarios en la API. |
 | [Inicio de sesión del usuario](#inicio-de-sesión-del-usuario) | `POST` | `/api/users/login` | Endpoint para el inicio de sesión del usuarios en la API. |
+| [Cierre de sesión del usuario](#cierre-de-sesión-del-usuario) | `POST` | `/api/users/logout` | Endpoint para el cierre de sesión del usuario en la API. |
 
 #### Registro de usuario
 
@@ -204,6 +205,39 @@ Content-Type: application/json
       "user_type": "student"
     }
   }
+}
+```
+
+#### Cierre de sesión del usuario
+
+##### Método HTTP
+
+```http
+POST /api/users/logout
+```
+
+##### Headers
+
+| Header           | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `Token`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Ejemplo de solicitud
+
+```http
+Authorization: Token <your_token_key>
+Content-Type: application/json
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "status": "success",
+  "message": "User logged out successfully."
 }
 ```
 
