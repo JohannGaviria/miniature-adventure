@@ -302,7 +302,7 @@ Content-Type: application/json
       "email": "test@email.com",
       "user_type": "student",
       "date_joined": "2025-01-03T04:07:05.726101Z",
-      "last_login": null
+      "last_login": "2025-01-03T23:09:15.534885Z"
     }
   }
 }
