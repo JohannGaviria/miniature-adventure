@@ -104,6 +104,7 @@ python manage.py runserver --settings=config.settings.development
 | [Registro de usuario](#registro-de-usuario) | `POST` | `/api/users/register` | Endpoint para el registro de usuarios en la API. |
 | [Inicio de sesión del usuario](#inicio-de-sesión-del-usuario) | `POST` | `/api/users/login` | Endpoint para el inicio de sesión del usuarios en la API. |
 | [Cierre de sesión del usuario](#cierre-de-sesión-del-usuario) | `POST` | `/api/users/logout` | Endpoint para el cierre de sesión del usuario en la API. |
+| [Actualización de datos del usuario](#actualización-de-datos-del-usuario) | `PUT` | `/api/users/update` | Endpoint para la actualización de datos del usuario en la API. |
 
 #### Registro de usuario
 
@@ -119,7 +120,7 @@ POST /api/users/register
 | :-------- | :------- | :------------------------- |
 | `username` | `string` | **Requerido**. Nombre del usuario |
 | `first_name` | `string` | **Requerido**. Primer nombre del usuario |
-| `last_name` | `string` | **Requerido**. Apellido del usuario |
+| `last_name` | `string` | **Opcional**. Apellido del usuario |
 | `email` | `string` | **Requerido**. Correo electrónico del usuario |
 | `password` | `string` | **Requerido**. Contraseña del usuario |
 | `user_type` | `string` | **Requerido**. Tipo de usuario |
@@ -202,7 +203,9 @@ Content-Type: application/json
       "first_name": "test first name",
       "last_name": "test last name",
       "email": "test@email.com",
-      "user_type": "student"
+      "user_type": "student",
+      "date_joined": "2025-01-03T04:07:05.726101Z",
+      "last_login": null
     }
   }
 }
@@ -220,7 +223,7 @@ POST /api/users/logout
 
 | Header           | Tipo     | Descripción                |
 | :--------------- | :------- | :------------------------- |
-| `Token`  | `string` | **Requerido**. Token de autenticación del usuario |
+| `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
 
 ##### Ejemplo de solicitud
 
@@ -238,6 +241,70 @@ Content-Type: application/json
 {
   "status": "success",
   "message": "User logged out successfully."
+}
+```
+
+#### Actualización de datos del usuario
+
+##### Método HTTP
+
+```http
+PUT /api/users/update
+```
+
+##### Headers
+
+| Header           | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Parámetros
+
+| Parámetro     | Tipo     | Descripción                |
+| :------------ | :------- | :------------------------- |
+| `first_name`  | `string` | **Opcional**. Primer nombre del usuario |
+| `last_name`   | `string` | **Opcional**. Apellido del usuario |
+| `email`       | `string` | **Opcional**. Correo electrónico del usuario |
+| `password`    | `string` | **Opcional**. Contraseña del usuario |
+| `user_type`   | `string` | **Opcional**. Tipo de usuario |
+
+##### Ejemplo de solicitud
+
+```http
+Authorization: Token your_token_key
+Content-Type: application/json
+
+{
+  "first_name": "UpdatedFirstName",
+  "last_name": "UpdatedLastName"
+}
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "status": "success",
+  "message": "User data updated successfully.",
+  "data": {
+    "token": {
+      "token_key": "your_new_token_key",
+      "token_expiration": "2025-01-06T22:50:19.554753+00:00"
+    },
+    "user": {
+      "id": 1,
+      "username": "testUsername",
+      "first_name": "UpdatedFirstName",
+      "last_name": "UpdatedLastName",
+      "email": "test@email.com",
+      "user_type": "student",
+      "date_joined": "2025-01-03T04:07:05.726101Z",
+      "last_login": null
+    }
+  }
 }
 ```
 
