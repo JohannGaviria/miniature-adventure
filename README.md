@@ -102,6 +102,7 @@ python manage.py runserver --settings=config.settings.development
 | Nombre | Método | URL | Descripción |
 |:------ | :----- | :-- | :---------- |
 | [Registro de usuario](#registro-de-usuario) | `POST` | `/api/users/sign_up` | Endpoint para el registro de usuarios en la API. |
+| [Inicio de sesión del usuario](#inicio-de-sesión-del-usuario) | `POST` | `/api/users/login` | Endpoint para el inicio de sesión del usuarios en la API. |
 
 #### Registro de usuario
 
@@ -151,6 +152,58 @@ Content-Type: application/json
 {
   "status": "success",
   "message": "User registered successfully"
+}
+```
+
+#### Inicio de sesión del usuario
+
+##### Método HTTP
+
+```http
+POST /api/users/login
+```
+
+##### Parámetros
+
+| Parámetro | Tipo     | Descripción                |
+| :-------- | :------- | :------------------------- |
+| `email`   | `string` | **Requerido**. Correo electrónico del usuario |
+| `password`| `string` | **Requerido**. Contraseña del usuario |
+
+##### Ejemplo de solicitud
+
+```http
+Content-Type: application/json
+
+{
+  "email": "test@email.com",
+  "password": "testPassword"
+}
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 200 Ok
+Content-Type: application/json
+
+{
+  "status": "success",
+  "message": "User logged in successfully.",
+  "data": {
+    "token": {
+      "token_key": "your_token_key",
+      "token_expiration": "2023-10-10T10:00:00Z"
+    },
+    "user": {
+      "id": 1,
+      "username": "testUsername",
+      "first_name": "test first name",
+      "last_name": "test last name",
+      "email": "test@email.com",
+      "user_type": "student"
+    }
+  }
 }
 ```
 
