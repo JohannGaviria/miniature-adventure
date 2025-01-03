@@ -105,6 +105,7 @@ python manage.py runserver --settings=config.settings.development
 | [Inicio de sesión del usuario](#inicio-de-sesión-del-usuario) | `POST` | `/api/users/login` | Endpoint para el inicio de sesión del usuarios en la API. |
 | [Cierre de sesión del usuario](#cierre-de-sesión-del-usuario) | `POST` | `/api/users/logout` | Endpoint para el cierre de sesión del usuario en la API. |
 | [Actualización de datos del usuario](#actualización-de-datos-del-usuario) | `PUT` | `/api/users/update` | Endpoint para la actualización de datos del usuario en la API. |
+| [Eliminación de usuario](#eliminación-de-usuario) | `DELETE` | `/api/users/delete` | Endpoint para la eliminación del usuario en la API. |
 
 #### Registro de usuario
 
@@ -305,6 +306,39 @@ Content-Type: application/json
       "last_login": "2025-01-03T23:09:15.534885Z"
     }
   }
+}
+```
+
+#### Eliminación de usuario
+
+##### Método HTTP
+
+```http
+DELETE /api/users/delete
+```
+
+##### Headers
+
+| Header           | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Ejemplo de solicitud
+
+```http
+Authorization: Token your_token_key
+Content-Type: application/json
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "status": "success",
+  "message": "User deleted successfully."
 }
 ```
 

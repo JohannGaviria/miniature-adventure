@@ -183,3 +183,21 @@ def update_user(request):
             'user': user_response_serializer.data
         }
     }, status=status.HTTP_200_OK)
+
+
+# Endpoint para eliminar el usuario
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_user(request):
+    # Elimina el token del usuario autenticado
+    request.user.auth_token.delete()
+
+    # Elimina el usuario autenticado
+    request.user.delete()
+
+    # Respuesta de eliminación exitoso
+    return Response({
+        'status': 'success',
+        'message': 'User deleted successfully.'
+    }, status=status.HTTP_200_OK)
