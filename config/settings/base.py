@@ -7,19 +7,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 load_dotenv(Path.joinpath(BASE_DIR, '.env'))
 
-SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_PASSWORD_SALT')
-
-FRONTEND_URL = os.environ.get('FRONTEND_URL')
-
-DEFAULT_AUTO_FIELD = os.environ.get('EMAIL_HOST_USER')
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = DEFAULT_AUTO_FIELD
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
-
-
 # Application definition
 BASE_APPS = [
     'django.contrib.auth',
