@@ -14,6 +14,6 @@ def validate_user_type(user, required_type):
                     'User type is invalid.'
                 ]
             }
-        }, status=status.HTTP_400_BAD_REQUEST)
+        }, status=status.HTTP_403_FORBIDDEN)
     # Retorna None si el tipo de usuario es correcto
     return None
