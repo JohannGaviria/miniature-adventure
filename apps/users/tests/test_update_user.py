@@ -6,9 +6,14 @@ from apps.users.models import CustomUser
 from rest_framework.authtoken.models import Token
 
 
-# Tests para la actualización de datos del usuario
 class UpdateUserTestCase(TestCase):
+    """
+    Test case para el endpoint de actualización de datos de usuario.
+    """
     def setUp(self):
+        """
+        Configuración inicial de los casos de prueba.
+        """
         self.client = APIClient()
         self.url = reverse('update_user')
         self.user = CustomUser.objects.create_user(
@@ -29,7 +34,11 @@ class UpdateUserTestCase(TestCase):
 
     def test_update_user_successful(self):
         """
-        Prueba de actualización de datos del usuario exitosa.
+        Prueba de actualización de datos del usuario con éxito.
+
+        Verifica que el endpoint responda con un código de estado
+        200 cuando se proporcionan datos válidos de usuario y
+        el usuario está autenticado.
         """
         response = self.client.put(self.url, self.data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -40,7 +49,10 @@ class UpdateUserTestCase(TestCase):
 
     def test_update_user_invalid_data(self):
         """
-        Prueba de actualización de datos del usuario con datos inválidos.
+        Prueba de actualización de datos del usuario con datos no válidos.
+
+        Verifica que el endpoint responda con un código de estado
+        400 cuando se proporcionan datos no válidos de usuario.
         """
         invalid_data = {'email': 'invalidemail'}
         response = self.client.put(self.url, invalid_data, format='json')
@@ -52,7 +64,10 @@ class UpdateUserTestCase(TestCase):
 
     def test_update_user_without_token(self):
         """
-        Prueba de actualización de datos del usuario sin token de autenticación.
+        Prueba de actualización de datos del usuario sin token.
+
+        Verifica que el endpoint responda con un código de estado
+        401 cuando no se proporciona un token de autenticación.
         """
         self.client.credentials()
         response = self.client.put(self.url, self.data, format='json')

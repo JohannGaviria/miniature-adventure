@@ -7,6 +7,16 @@ from time import sleep
 class Command(BaseCommand):
     help = 'Wait for database connection'
     def handle(self, *args, **options):
+        """
+        Comando para esperar la conexión de la base de datos.
+
+        Args:
+            *args (list): Lista de argumentos.
+            **options (dict): Diccionario de opciones.
+        
+        Returns:
+            None
+        """
         self.stdout.write('Waiting for database...')
         db_conn = False
         while not db_conn:

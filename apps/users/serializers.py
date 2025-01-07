@@ -4,21 +4,39 @@ from django.core.exceptions import ValidationError
 from .models import CustomUser, Student
 
 
-# Serializador para la validacion de los datos de usuario
 class UserValidationSerializer(serializers.ModelSerializer):
+    """
+    Serializador para la validacion de los datos de usuario.
+    """
     first_name = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
     password = serializers.CharField(write_only=True)
     user_type = serializers.ChoiceField(choices=CustomUser.USER_CHOICES, required=True)
 
     class Meta:
+        """
+        Metadatos del serializador.
+
+        Attributes:
+            model (CustomUser): Modelo de usuario personalizado.
+            fields (list): Campos del serializador.
+        """
         model = CustomUser
         fields = ['username', 'first_name', 'last_name', 'email', 'password', 'user_type']
     
 
     def validate_email(self, value):
         """
-        Valida que el correo electronico sea unico.
+        Valida que el correo electrónico no esté en uso.
+
+        Args:
+            value (str): Correo electrónico del usuario.
+        
+        Returns:
+            str: Correo electrónico del usuario.
+        
+        Raises:
+            serializers.ValidationError: Si el correo electrónico ya está en uso.
         """
         if CustomUser.objects.filter(email=value).exists():
             raise serializers.ValidationError(f"This email {value} is already in use.")
@@ -27,7 +45,16 @@ class UserValidationSerializer(serializers.ModelSerializer):
 
     def validate_password(self, value):
         """
-        Valida que la contraseña sea segura.
+        Valida la contraseña del usuario.
+
+        Args:
+            value (str): Contraseña del usuario.
+        
+        Returns:
+            str: Contraseña del usuario.
+        
+        Raises:
+            serializers.ValidationError: Si la contraseña no cumple con las reglas de validación.
         """
         try:
             validate_password(value)
@@ -39,6 +66,12 @@ class UserValidationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """
         Crea un nuevo usuario con los datos validados.
+
+        Args:
+            validated_data (dict): Datos validados del usuario.
+        
+        Returns:
+            CustomUser: Nuevo usuario creado.
         """
         user = CustomUser(
             username=validated_data['username'],
@@ -52,21 +85,49 @@ class UserValidationSerializer(serializers.ModelSerializer):
         return user
 
 
-# Serializador para la respuesta de usuario
 class UserResponseSerializer(serializers.ModelSerializer):
+    """
+    Serializador para la respuesta de usuario.
+    """
     class Meta:
+        """
+        Metadatos del serializador.
+
+        Attributes:
+            model (CustomUser): Modelo de usuario personalizado.
+            fields (list): Campos del serializador.
+        """
         model = CustomUser
         fields = ['id', 'username', 'first_name', 'last_name', 'email', 'user_type', 'date_joined', 'last_login']
 
 
-# Serializador para la validacion de los datos de estudiante
 class StudentValidationSerializer(serializers.ModelSerializer):
+    """
+    Serializador para la validación de los datos del estudiante.
+    """
     class Meta:
+        """
+        Metadatos del serializador.
+
+        Attributes:
+            model (Student): Modelo de estudiante.
+            fields (list): Campos del serializador.
+            read_only_fields (list): Campos de solo lectura.
+        """
         model = Student
         fields = '__all__'
         read_only_fields = ['user']
 
     def create(self, validated_data):
+        """
+        Crea un nuevo estudiante con los datos validados.
+
+        Args:
+            validated_data (dict): Datos validados del estudiante.
+        
+        Returns:
+            Student: Nuevo estudiante creado.
+        """
         # Asigna el usuario autenticado al campo user
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
