@@ -3,6 +3,17 @@ from rest_framework import status
 
 
 def validate_existing_data(model, user):
+    """
+    Validación de los datos existentes del usuario.
+
+    Args:
+        model (Model): Modelo a validar.
+        user (User): Tipo de usuario a validar.
+    
+    Returns:
+        Response: Respuesta de error si los datos del usuario ya existen.
+        None: Si los datos del usuario no existen.
+    """
     try:
         # Obtiene los datos del modelo
         model.objects.get(user=user)
