@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from .models import CustomUser
+from .models import CustomUser, Student
 
 
 # Serializador para la validacion de los datos de usuario
@@ -57,3 +57,16 @@ class UserResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'first_name', 'last_name', 'email', 'user_type', 'date_joined', 'last_login']
+
+
+# Serializador para la validacion de los datos de estudiante
+class StudentValidationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = '__all__'
+        read_only_fields = ['user']
+
+    def create(self, validated_data):
+        # Asigna el usuario autenticado al campo user
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)

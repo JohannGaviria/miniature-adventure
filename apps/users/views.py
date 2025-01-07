@@ -6,8 +6,11 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from django.utils import timezone
 from apps.core.utils.serializer_validation import serializer_validation
-from .serializers import UserValidationSerializer, UserResponseSerializer
-from .models import CustomUser
+from .serializers import UserValidationSerializer, UserResponseSerializer, StudentValidationSerializer
+from .models import CustomUser, Student
+from .utils.validator_users_type import validate_user_type
+from .utils.validator_existing_data import validate_existing_data
+from .utils.upload_file_cloudinary import upload_cv_to_cloudinary
 from datetime import timedelta
 
 
@@ -201,3 +204,66 @@ def delete_user(request):
         'status': 'success',
         'message': 'User deleted successfully.'
     }, status=status.HTTP_200_OK)
+
+
+# Endpoint para agregar los datos del estudiante
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def add_student_data(request):
+    # Valida que el usuario autenticado sea de tipo estudiante
+    validation_response = validate_user_type(request.user, 'student')
+    
+    # Verifica si hay errores en la validación
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+    
+    # Valida que los datos del estudiante no existan
+    validation_response = validate_existing_data(Student, request.user)
+    
+    # Verifica si hay errores en la validación
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+    
+    # Obtiene el archivo de curriculum vitae
+    cv_file = request.FILES.get('cv')
+
+    # Verifica si se envió un archivo de curriculum vitae
+    if cv_file:
+        try:
+            # Sube el archivo de curriculum vitae a Cloudinary
+            cv_url = upload_cv_to_cloudinary(cv_file)
+            # Asigna la URL del curriculum vitae a la petición
+            request.data['cv'] = cv_url
+        except Exception as e:
+            # Retorna un mensaje de error al subir el archivo
+            return Response({
+                'status': 'error',
+                'message': 'Error uploading file',
+                'errors': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    # Obtiene los datos enviados en la petición
+    student_validation_serializer = StudentValidationSerializer(data=request.data, context={'request': request})
+    
+    # Obtiene la validación del serializer
+    validation_error = serializer_validation(student_validation_serializer)
+    
+    # Verifica la validación del serializer
+    if validation_error:
+        # Respuesta de error en la validación del serializer
+        return Response(
+            validation_error,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # Guarda los datos del estudiante en la base de datos
+    student_validation_serializer.save()
+
+    # Retorna un mensaje de exito al agregar los datos del estudiante
+    return Response({
+        'status': 'success',
+        'message': 'Student data added successfully.',
+    }, status=status.HTTP_201_CREATED)

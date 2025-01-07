@@ -4,7 +4,8 @@ Desarrollo de una API REST para la gestión de ofertas de trabajo entre estudian
 
 ## Tecnologías Utilizadas
 
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)![DRF](https://img.shields.io/badge/DRF-000000?style=for-the-badge&logo=django&logoColor=white)![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)![Shell](https://img.shields.io/badge/Shell-4EAA25?style=for-the-badge&logo=gnubash&logoColor=white)![Tests](https://img.shields.io/badge/Tests-000000?style=for-the-badge&logo=jest&logoColor=white)![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white)
+
 
 ## Tabla de Contenidos
 
@@ -46,10 +47,10 @@ source venv/bin/activate
   - `DB_HOST` -> Host de la base de datos.
   - `DB_PORT` -> Puerto de la base de datos.
   - `DJANGO_SETTINGS_MODULE` -> Módulo de configuración de Django.
-  - `EMAIL_HOST_USER` -> Correo electrónico para el envío de notificaciones por email.
-  - `EMAIL_HOST_PASSWORD` -> Contraseña del correo electrónico.
-  - `SECURITY_PASSWORD_SALT` -> Contraseña segura que permitirá al módulo `itsdangerous` generar y verificar tokens de forma segura.
   - `FRONTEND_URL` -> URL de verificación que se enviará por correo electrónico.
+  - `CLOUDINARY_CLOUD_NAME` -> Nombre de la nube de Cloudinary.
+  - `CLOUDINARY_API_KEY` -> Clave API de Cloudinary.
+  - `CLOUDINARY_API_SECRET` -> Secreto API de Cloudinary.
 
 ### Entorno con Docker
 
@@ -106,6 +107,7 @@ python manage.py runserver --settings=config.settings.development
 | [Cierre de sesión del usuario](#cierre-de-sesión-del-usuario) | `POST` | `/api/users/logout` | Endpoint para el cierre de sesión del usuario en la API. |
 | [Actualización de datos del usuario](#actualización-de-datos-del-usuario) | `PUT` | `/api/users/update` | Endpoint para la actualización de datos del usuario en la API. |
 | [Eliminación de usuario](#eliminación-de-usuario) | `DELETE` | `/api/users/delete` | Endpoint para la eliminación del usuario en la API. |
+| [Agregar datos del estudiante](#agregar-datos-del-estudiante) | `POST` | `/api/users/student/add` | Endpoint para agregar datos del estudiante en la API. |
 
 #### Registro de usuario
 
@@ -341,5 +343,60 @@ Content-Type: application/json
   "message": "User deleted successfully."
 }
 ```
+
+#### Agregar datos del estudiante
+
+##### Método HTTP
+
+```http
+POST /api/users/student/add
+```
+
+##### Headers
+
+| Header           | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Parámetros
+
+| Parámetro                 | Tipo     | Descripción                |
+| :------------------------ | :------- | :------------------------- |
+| `university`              | `string` | **Requerido**. Universidad del estudiante |
+| `degree`                  | `string` | **Requerido**. Título del estudiante |
+| `major`                   | `string` | **Requerido**. Especialidad del estudiante |
+| `graduation_year`         | `integer`| **Requerido**. Año de graduación del estudiante |
+| `professional_experience` | `string` | **Requerido**. Experiencia profesional del estudiante |
+| `cv`                      | `file`   | **Opcional**. Archivo de curriculum vitae del estudiante |
+| `about_me`                | `string` | **Requerido**. Información sobre el estudiante |
+
+##### Ejemplo de solicitud
+
+```http
+Authorization: Token your_token_key
+Content-Type: application/json
+
+{
+  "university": "Test University",
+  "degree": "Test Degree",
+  "major": "Test Major",
+  "graduation_year": 2025,
+  "professional_experience": "Test Experience",
+  "about_me": "Test About Me"
+}
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+  "status": "success",
+  "message": "Student data added successfully."
+}
+```
+
 
 ---
