@@ -26,10 +26,7 @@ def register(request):
     # Verifica la validación del serializer
     if validation_error:
         # Respuesta de error en la validación del serializer
-        return Response(
-            validation_error,
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        return validation_error
     
     # Guarda el usuario en la base de datos
     user_validation_serializer.save()
@@ -154,10 +151,7 @@ def update_user(request):
     # Verifica la validación del serializer
     if validation_error:
         # Respuesta de error en la validación del serializer
-        return Response(
-            validation_error,
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        return validation_error
 
     # Guarda los datos actualizados del usuario
     user_validation_serializer.save()
@@ -254,10 +248,7 @@ def add_student_data(request):
     # Verifica la validación del serializer
     if validation_error:
         # Respuesta de error en la validación del serializer
-        return Response(
-            validation_error,
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        return validation_error
     
     # Guarda los datos del estudiante en la base de datos
     student_validation_serializer.save()
