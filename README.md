@@ -109,6 +109,7 @@ python manage.py runserver --settings=config.settings.development
 | [Eliminación de usuario](#eliminación-de-usuario) | `DELETE` | `/api/users/delete` | Endpoint para la eliminación del usuario en la API. |
 | [Agregar datos del estudiante](#agregar-datos-del-estudiante) | `POST` | `/api/users/student/add` | Endpoint para agregar datos del estudiante en la API. |
 | [Obtener datos del estudiante](#obtener-datos-del-estudiante) | `GET` | `/api/users/student/get` | Endpoint para obtener datos del estudiante en la API. |
+| [Actualizar datos del estudiante](#actualizar-datos-del-estudiante) | `PUT` | `/api/users/student/update` | Endpoint para actualizar datos del estudiante en la API. |
 
 #### Registro de usuario
 
@@ -442,6 +443,60 @@ Content-Type: application/json
             "user": 1
         }
     }
+}
+```
+
+#### Actualizar datos del estudiante
+
+##### Método HTTP
+
+```http
+PUT /api/users/student/update
+```
+
+##### Headers
+
+| Header           | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Parámetros
+
+| Parámetro                 | Tipo     | Descripción                |
+| :------------------------ | :------- | :------------------------- |
+| `university`              | `string` | **Opcional**. Universidad del estudiante |
+| `degree`                  | `string` | **Opcional**. Título del estudiante |
+| `major`                   | `string` | **Opcional**. Especialidad del estudiante |
+| `graduation_year`         | `integer`| **Opcional**. Año de graduación del estudiante |
+| `professional_experience` | `string` | **Opcional**. Experiencia profesional del estudiante |
+| `cv`                      | `file`   | **Opcional**. Archivo de curriculum vitae del estudiante |
+| `about_me`                | `string` | **Opcional**. Información sobre el estudiante |
+
+##### Ejemplo de solicitud
+
+```http
+Authorization: Token your_token_key
+Content-Type: application/json
+
+{
+  "university": "Updated University",
+  "degree": "Updated Degree",
+  "major": "Updated Major",
+  "graduation_year": 2026,
+  "professional_experience": "Updated Experience",
+  "about_me": "Updated About Me"
+}
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "status": "success",
+  "message": "Student data updated successfully."
 }
 ```
 
