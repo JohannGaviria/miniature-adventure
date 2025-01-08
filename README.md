@@ -110,6 +110,7 @@ python manage.py runserver --settings=config.settings.development
 | [Agregar datos del estudiante](#agregar-datos-del-estudiante) | `POST` | `/api/users/student/add` | Endpoint para agregar datos del estudiante en la API. |
 | [Obtener datos del estudiante](#obtener-datos-del-estudiante) | `GET` | `/api/users/student/get` | Endpoint para obtener datos del estudiante en la API. |
 | [Actualizar datos del estudiante](#actualizar-datos-del-estudiante) | `PUT` | `/api/users/student/update` | Endpoint para actualizar datos del estudiante en la API. |
+| [Agregar datos de la compañia](#agregar-datos-de-la-compañia) | `POST` | `/api/users/company/add` | Endpoint para agregar datos de la compañia en la API. |
 
 #### Registro de usuario
 
@@ -497,6 +498,55 @@ Content-Type: application/json
 {
   "status": "success",
   "message": "Student data updated successfully."
+}
+```
+
+#### Agregar datos de la compañia
+
+##### Método HTTP
+
+```http
+POST /api/users/company/add
+```
+
+##### Headers
+
+| Header           | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Parámetros
+
+| Parámetro                 | Tipo     | Descripción                |
+| :------------------------ | :------- | :------------------------- |
+| `name`                    | `string` | **Requerido**. Nombre de la compañia |
+| `industry`                | `string` | **Requerido**. Industria de trabajo de la compañia |
+| `location`                | `string` | **Requerido**. Ubicación de la empresa |
+| `description`             | `string` | **Requerido**. Descripción de la empresa |
+
+##### Ejemplo de solicitud
+
+```http
+Authorization: Token your_token_key
+Content-Type: application/json
+
+{
+  "name": "Test Name Company",
+  "industry": "Test Industry",
+  "location": "Test Location",
+  "description": "Test Description"
+}
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+  "status": "success",
+  "message": "Company data added successfully."
 }
 ```
 
