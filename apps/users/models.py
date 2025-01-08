@@ -25,3 +25,12 @@ class Student(models.Model):
     cv = models.URLField(max_length=500, null=True, blank=True)
     about_me = models.TextField()
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+
+
+# Define el modelo de compañia
+class Company(models.Model):
+    name = models.CharField(max_length=255)
+    industry = models.CharField(max_length=255)
+    location = models.CharField(max_length=255)
+    description = models.TextField()
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)

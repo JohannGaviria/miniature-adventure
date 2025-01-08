@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from .models import CustomUser, Student
+from .models import CustomUser, Student, Company
 
 
 class UserValidationSerializer(serializers.ModelSerializer):
@@ -118,6 +118,7 @@ class StudentValidationSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['user']
 
+
     def create(self, validated_data):
         """
         Crea un nuevo estudiante con los datos validados.
@@ -147,3 +148,36 @@ class StudentResponseSerializer(serializers.ModelSerializer):
         """
         model = Student
         fields = '__all__'
+
+
+class CompanyValidationSerializer(serializers.ModelSerializer):
+    """
+    Serializador para la validación de los datos de la compañia.
+    """
+    class Meta:
+        """
+        Metadatos del serializador.
+
+        Attributes:
+            model (Company): Modelo de la comapañia.
+            fields (list): Campos del serializador.
+            read_only_fields (list): Campos de solo lectura.
+        """
+        model = Company
+        fields = '__all__'
+        read_only_fields = ['user']
+
+
+    def create(self, validated_data):
+        """
+        Crea una nueva compañia con los datos validados.
+
+        Args:
+            validated_data (dict): Datos validados de la compañia.
+        
+        Returns:
+            Company: Nueva compañia creada.
+        """
+        # Asigna el usuario autenticado al campo user
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)

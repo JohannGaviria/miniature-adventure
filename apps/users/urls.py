@@ -11,4 +11,5 @@ urlpatterns = [
     path('users/student/add', views.add_student_data, name='add_student_data'),
     path('users/student/get', views.get_student_data, name='get_student_data'),
     path('users/student/update', views.update_student_data, name='update_student_data'),
+    path('users/company/add', views.add_company_data, name='add_company_data'),
 ]
