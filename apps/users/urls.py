@@ -13,4 +13,5 @@ urlpatterns = [
     path('users/student/update', views.update_student_data, name='update_student_data'),
     path('users/company/add', views.add_company_data, name='add_company_data'),
     path('users/company/get', views.get_company_data, name='get_company_data'),
+    path('users/company/update', views.update_company_data, name='update_company_data'),
 ]
