@@ -108,6 +108,7 @@ python manage.py runserver --settings=config.settings.development
 | [Actualización de datos del usuario](#actualización-de-datos-del-usuario) | `PUT` | `/api/users/update` | Endpoint para la actualización de datos del usuario en la API. |
 | [Eliminación de usuario](#eliminación-de-usuario) | `DELETE` | `/api/users/delete` | Endpoint para la eliminación del usuario en la API. |
 | [Agregar datos del estudiante](#agregar-datos-del-estudiante) | `POST` | `/api/users/student/add` | Endpoint para agregar datos del estudiante en la API. |
+| [Obtener datos del estudiante](#obtener-datos-del-estudiante) | `GET` | `/api/users/student/get` | Endpoint para obtener datos del estudiante en la API. |
 
 #### Registro de usuario
 
@@ -398,5 +399,50 @@ Content-Type: application/json
 }
 ```
 
+#### Obtener datos del estudiante
+
+##### Método HTTP
+
+```http
+GET /api/users/student/get
+```
+
+##### Headers
+
+| Header           | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Ejemplo de solicitud
+
+```http
+Authorization: Token your_token_key
+Content-Type: application/json
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "status": "success",
+    "message": "Student data was successfully obtained.",
+    "data": {
+        "student": {
+            "id": 1,
+            "university": "Test University",
+            "degree": "Test Degree",
+            "major": "Test Major",
+            "graduation_year": 2025,
+            "professional_experience": "Test Experience",
+            "about_me": "Test About Me",
+            "cv": "https://res.cloudinary.com/dccnkrmty/image/upload/v1736292828/miniature-adventure/students_cvs/test_cv.pdf",
+            "user": 1
+        }
+    }
+}
+```
 
 ---
