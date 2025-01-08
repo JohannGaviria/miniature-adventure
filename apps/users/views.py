@@ -270,6 +270,11 @@ def get_student_data(request):
     # Obtener los datos del estudiante
     student_data = get_model_data(Student, 'user', request.user)
 
+    # Verificar si se obtuvo una respuesta de error en lugar de los datos
+    if isinstance(student_data, Response):
+        # Si se obtuvo una respuesta de error, retornar directamente esa respuesta
+        return student_data
+
     # Valida que el usuario sea el estudiante
     validation_response = validate_user_is_creator(student_data, request.user)
     
