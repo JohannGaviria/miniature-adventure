@@ -10,7 +10,7 @@ from apps.core.utils.validate_user_is_creator import validate_user_is_creator
 from apps.core.utils.get_model_data import get_model_data
 from .serializers import (UserValidationSerializer, UserResponseSerializer,
                           StudentValidationSerializer, StudentResponseSerializer,
-                          CompanyValidationSerializer)
+                          CompanyValidationSerializer, CompanyResponseSerializer)
 from .models import CustomUser, Student, Company
 from .utils.validator_users_type import validate_user_type
 from .utils.validator_existing_data import validate_existing_data
@@ -414,3 +414,45 @@ def add_company_data(request):
         'status': 'success',
         'message': 'Company data added successfully.',
     }, status=status.HTTP_201_CREATED)
+
+
+# Endpoint para obtener los datos de la compañia
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_company_data(request):
+    # Obtener los datos de la compañia
+    company_data = get_model_data(Company, 'user', request.user)
+
+    # Verificar si se obtuvo una respuesta de error en lugar de los datos
+    if isinstance(company_data, Response):
+        # Si se obtuvo una respuesta de error, retornar directamente esa respuesta
+        return company_data
+
+    # Valida que el usuario sea el creador
+    validation_response = validate_user_is_creator(company_data, request.user)
+    
+    # Verifica si hay errores en la validación
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+    
+    # Valida que el usuario autenticado sea de tipo compañia
+    validation_response = validate_user_type(request.user, 'company')
+    
+    # Verifica si hay errores en la validación
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+    
+    # Serializa los datos de respuesta
+    company_response_serializer = CompanyResponseSerializer(company_data)
+
+    # Retorna un mensaje de exito al obtener los datos de la compañia
+    return Response({
+        'status': 'success',
+        'message': 'Company data was successfully obtained.',
+        'data': {
+            'company': company_response_serializer.data
+        }
+    }, status=status.HTTP_200_OK)
