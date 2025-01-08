@@ -111,6 +111,7 @@ python manage.py runserver --settings=config.settings.development
 | [Obtener datos del estudiante](#obtener-datos-del-estudiante) | `GET` | `/api/users/student/get` | Endpoint para obtener datos del estudiante en la API. |
 | [Actualizar datos del estudiante](#actualizar-datos-del-estudiante) | `PUT` | `/api/users/student/update` | Endpoint para actualizar datos del estudiante en la API. |
 | [Agregar datos de la compañia](#agregar-datos-de-la-compañia) | `POST` | `/api/users/company/add` | Endpoint para agregar datos de la compañia en la API. |
+| [Obtener datos de la compañia](#obtener-datos-de-la-compañia) | `GET` | `/api/users/company/get` | Endpoint para obtener datos de la compañia en la API. |
 
 #### Registro de usuario
 
@@ -429,21 +430,21 @@ HTTP/1.1 200 OK
 Content-Type: application/json
 
 {
-    "status": "success",
-    "message": "Student data was successfully obtained.",
-    "data": {
-        "student": {
-            "id": 1,
-            "university": "Test University",
-            "degree": "Test Degree",
-            "major": "Test Major",
-            "graduation_year": 2025,
-            "professional_experience": "Test Experience",
-            "about_me": "Test About Me",
-            "cv": "https://res.cloudinary.com/dccnkrmty/image/upload/v1736292828/miniature-adventure/students_cvs/test_cv.pdf",
-            "user": 1
-        }
+  "status": "success",
+  "message": "Student data was successfully obtained.",
+  "data": {
+    "student": {
+      "id": 1,
+      "university": "Test University",
+      "degree": "Test Degree",
+      "major": "Test Major",
+      "graduation_year": 2025,
+      "professional_experience": "Test Experience",
+      "about_me": "Test About Me",
+      "cv": "https://res.cloudinary.com/dccnkrmty/image/upload/v1736292828/miniature-adventure/students_cvs/test_cv.pdf",
+      "user": 1
     }
+  }
 }
 ```
 
@@ -547,6 +548,49 @@ Content-Type: application/json
 {
   "status": "success",
   "message": "Company data added successfully."
+}
+```
+
+#### Obtener datos de la compañia
+
+##### Método HTTP
+
+```http
+GET /api/users/company/get
+```
+
+##### Headers
+
+| Header           | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Ejemplo de solicitud
+
+```http
+Authorization: Token your_token_key
+Content-Type: application/json
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "status": "success",
+  "message": "Company data was successfully obtained.",
+  "data": {
+    "company": {
+      "id": 1,
+      "name": "Grant - Bogisich",
+      "industry": "and Sons",
+      "location": "tw",
+      "description": "Principal",
+      "user": 9
+    }
+  }
 }
 ```
 
