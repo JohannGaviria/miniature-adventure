@@ -6,7 +6,9 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from django.utils import timezone
 from apps.core.utils.serializer_validation import serializer_validation
-from .serializers import UserValidationSerializer, UserResponseSerializer, StudentValidationSerializer
+from apps.core.utils.validate_user_is_creator import validate_user_is_creator
+from apps.core.utils.get_model_data import get_model_data
+from .serializers import UserValidationSerializer, UserResponseSerializer, StudentValidationSerializer, StudentResponseSerializer
 from .models import CustomUser, Student
 from .utils.validator_users_type import validate_user_type
 from .utils.validator_existing_data import validate_existing_data
@@ -258,3 +260,40 @@ def add_student_data(request):
         'status': 'success',
         'message': 'Student data added successfully.',
     }, status=status.HTTP_201_CREATED)
+
+
+# Endpoint para obtener los datos del estudiante
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_student_data(request):
+    # Obtener los datos del estudiante
+    student_data = get_model_data(Student, 'user', request.user)
+
+    # Valida que el usuario sea el estudiante
+    validation_response = validate_user_is_creator(student_data, request.user)
+    
+    # Verifica si hay errores en la validación
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+    
+    # Valida que el usuario autenticado sea de tipo estudiante
+    validation_response = validate_user_type(request.user, 'student')
+    
+    # Verifica si hay errores en la validación
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+    
+    # Serializa los datos de respuesta
+    student_response_serializer = StudentResponseSerializer(student_data)
+
+    # Retorna un mensaje de exito al obtener los datos del estudiante
+    return Response({
+        'status': 'success',
+        'message': 'Student data was successfully obtained.',
+        'data': {
+            'student': student_response_serializer.data
+        }
+    }, status=status.HTTP_200_OK)

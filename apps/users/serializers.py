@@ -131,3 +131,19 @@ class StudentValidationSerializer(serializers.ModelSerializer):
         # Asigna el usuario autenticado al campo user
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
+
+
+class StudentResponseSerializer(serializers.ModelSerializer):
+    """
+    Serializador para la respuesta de los datos del estudiante.
+    """
+    class Meta:
+        """
+        Metadatos del serializador.
+
+        Attributes:
+            model (Student): Modelo de estudiante.
+            fields (list): Campos del serializador.
+        """
+        model = Student
+        fields = '__all__'
