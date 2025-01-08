@@ -246,7 +246,7 @@ def add_student_data(request):
     
     # Obtiene la validación del serializer
     validation_error = serializer_validation(student_validation_serializer)
-    
+
     # Verifica la validación del serializer
     if validation_error:
         # Respuesta de error en la validación del serializer
@@ -301,4 +301,72 @@ def get_student_data(request):
         'data': {
             'student': student_response_serializer.data
         }
+    }, status=status.HTTP_200_OK)
+
+
+# Endpoint para actualizar los datos del estudiante
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_student_data(request):
+    # Obtener los datos del estudiante
+    student_data = get_model_data(Student, 'user', request.user)
+
+    # Verificar si se obtuvo una respuesta de error en lugar de los datos
+    if isinstance(student_data, Response):
+        # Si se obtuvo una respuesta de error, retornar directamente esa respuesta
+        return student_data
+
+    # Valida que el usuario sea el estudiante
+    validation_response = validate_user_is_creator(student_data, request.user)
+    
+    # Verifica si hay errores en la validación
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+    
+    # Valida que el usuario autenticado sea de tipo estudiante
+    validation_response = validate_user_type(request.user, 'student')
+    
+    # Verifica si hay errores en la validación
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+    
+    # Obtiene el archivo de curriculum vitae
+    cv_file = request.FILES.get('cv')
+
+    # Verifica si se envió un archivo de curriculum vitae
+    if cv_file:
+        try:
+            # Sube el archivo de curriculum vitae a Cloudinary
+            cv_url = upload_cv_to_cloudinary(cv_file)
+            # Asigna la URL del curriculum vitae a la petición
+            request.data['cv'] = cv_url
+        except Exception as e:
+            # Retorna un mensaje de error al subir el archivo
+            return Response({
+                'status': 'error',
+                'message': 'Error uploading file',
+                'errors': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    # Obtiene los datos enviados en la petición
+    student_validation_serializer = StudentValidationSerializer(student_data, data=request.data, partial=True)
+    
+    # Obtiene la validación del serializer
+    validation_error = serializer_validation(student_validation_serializer)
+    
+    # Verifica la validación del serializer
+    if validation_error:
+        # Respuesta de error en la validación del serializer
+        return validation_error
+    
+    # Guarda los datos actualizados del estudiante en la base de datos
+    student_validation_serializer.save()
+
+    # Retorna un mensaje de éxito al actualizar los datos del estudiante
+    return Response({
+        'status': 'success',
+        'message': 'Student data updated successfully.'
     }, status=status.HTTP_200_OK)
