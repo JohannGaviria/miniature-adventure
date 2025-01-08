@@ -112,6 +112,7 @@ python manage.py runserver --settings=config.settings.development
 | [Actualizar datos del estudiante](#actualizar-datos-del-estudiante) | `PUT` | `/api/users/student/update` | Endpoint para actualizar datos del estudiante en la API. |
 | [Agregar datos de la compañia](#agregar-datos-de-la-compañia) | `POST` | `/api/users/company/add` | Endpoint para agregar datos de la compañia en la API. |
 | [Obtener datos de la compañia](#obtener-datos-de-la-compañia) | `GET` | `/api/users/company/get` | Endpoint para obtener datos de la compañia en la API. |
+| [Actualizar datos de la compañia](#actualizar-datos-de-la-compañia) | `PUT` | `/api/users/company/update` | Endpoint para actualizar datos de la compañia en la API. |
 
 #### Registro de usuario
 
@@ -591,6 +592,55 @@ Content-Type: application/json
       "user": 9
     }
   }
+}
+```
+
+#### Agregar datos de la compañia
+
+##### Método HTTP
+
+```http
+POST /api/users/company/add
+```
+
+##### Headers
+
+| Header           | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Parámetros
+
+| Parámetro                 | Tipo     | Descripción                |
+| :------------------------ | :------- | :------------------------- |
+| `name`                    | `string` | **Optional**. Nombre de la compañia |
+| `industry`                | `string` | **Optional**. Industria de trabajo de la compañia |
+| `location`                | `string` | **Optional**. Ubicación de la empresa |
+| `description`             | `string` | **Optional**. Descripción de la empresa |
+
+##### Ejemplo de solicitud
+
+```http
+Authorization: Token your_token_key
+Content-Type: application/json
+
+{
+  "name": "Updated Name Company",
+  "industry": "Updated Industry",
+  "location": "Updated Location",
+  "description": "Updated Description"
+}
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 20o Ok
+Content-Type: application/json
+
+{
+  "status": "success",
+  "message": "Company data updated successfully."
 }
 ```
 

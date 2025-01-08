@@ -456,3 +456,53 @@ def get_company_data(request):
             'company': company_response_serializer.data
         }
     }, status=status.HTTP_200_OK)
+
+
+# Endpoint para actualizar los datos de la compañia
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_company_data(request):
+    # Obtener los datos de la compañia
+    company_data = get_model_data(Company, 'user', request.user)
+
+    # Verificar si se obtuvo una respuesta de error en lugar de los datos
+    if isinstance(company_data, Response):
+        # Si se obtuvo una respuesta de error, retornar directamente esa respuesta
+        return company_data
+
+    # Valida que el usuario sea el creador
+    validation_response = validate_user_is_creator(company_data, request.user)
+    
+    # Verifica si hay errores en la validación
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+    
+    # Valida que el usuario autenticado sea de tipo company
+    validation_response = validate_user_type(request.user, 'company')
+    
+    # Verifica si hay errores en la validación
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+    
+    # Obtiene los datos enviados en la petición
+    company_validation_serializer = CompanyValidationSerializer(company_data, data=request.data, partial=True)
+    
+    # Obtiene la validación del serializer
+    validation_error = serializer_validation(company_validation_serializer)
+    
+    # Verifica la validación del serializer
+    if validation_error:
+        # Respuesta de error en la validación del serializer
+        return validation_error
+    
+    # Guarda los datos actualizados de la compañia en la base de datos
+    company_validation_serializer.save()
+
+    # Retorna un mensaje de éxito al actualizar los datos de la compañia
+    return Response({
+        'status': 'success',
+        'message': 'Company data updated successfully.'
+    }, status=status.HTTP_200_OK)
