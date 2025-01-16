@@ -7,12 +7,12 @@ from rest_framework.authtoken.models import Token
 from django.utils import timezone
 from apps.core.utils.serializer_validation import serializer_validation
 from apps.core.utils.validate_user_is_creator import validate_user_is_creator
+from apps.core.utils.validator_user_type import validate_user_type
 from apps.core.utils.get_model_data import get_model_data
 from .serializers import (UserValidationSerializer, UserResponseSerializer,
                           StudentValidationSerializer, StudentResponseSerializer,
                           CompanyValidationSerializer, CompanyResponseSerializer)
 from .models import CustomUser, Student, Company
-from .utils.validator_users_type import validate_user_type
 from .utils.validator_existing_data import validate_existing_data
 from .utils.upload_file_cloudinary import upload_cv_to_cloudinary
 from datetime import timedelta
