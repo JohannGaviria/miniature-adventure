@@ -98,6 +98,8 @@ python manage.py runserver --settings=config.settings.development
 
 ## Endpoints
 
+[![Postman](https://img.shields.io/badge/Ver-Documentacion-FF6C37?style=for-the-badge&logo=postman&logoColor=white)](https://documenter.getpostman.com/view/38982911/2sAYQZGrs8)
+
 ### Usuarios
 
 | Nombre | Método | URL | Descripción |
