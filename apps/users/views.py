@@ -269,6 +269,14 @@ def add_student_data(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_student_data(request):
+    # Valida que el usuario autenticado sea de tipo estudiante
+    validation_response = validate_user_type(request.user, 'student')
+    
+    # Verifica si hay errores en la validación
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+    
     # Obtener los datos del estudiante
     student_data = get_model_data(Student, 'user', request.user)
 
@@ -277,16 +285,8 @@ def get_student_data(request):
         # Si se obtuvo una respuesta de error, retornar directamente esa respuesta
         return student_data
 
-    # Valida que el usuario sea el estudiante
+    # Valida que el usuario sea el creador
     validation_response = validate_user_is_creator(student_data, request.user)
-    
-    # Verifica si hay errores en la validación
-    if validation_response:
-        # Retorna la respuesta de error
-        return validation_response
-    
-    # Valida que el usuario autenticado sea de tipo estudiante
-    validation_response = validate_user_type(request.user, 'student')
     
     # Verifica si hay errores en la validación
     if validation_response:
@@ -311,6 +311,14 @@ def get_student_data(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def update_student_data(request):
+    # Valida que el usuario autenticado sea de tipo estudiante
+    validation_response = validate_user_type(request.user, 'student')
+    
+    # Verifica si hay errores en la validación
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+
     # Obtener los datos del estudiante
     student_data = get_model_data(Student, 'user', request.user)
 
@@ -319,16 +327,8 @@ def update_student_data(request):
         # Si se obtuvo una respuesta de error, retornar directamente esa respuesta
         return student_data
 
-    # Valida que el usuario sea el estudiante
+    # Valida que el usuario sea el creador
     validation_response = validate_user_is_creator(student_data, request.user)
-    
-    # Verifica si hay errores en la validación
-    if validation_response:
-        # Retorna la respuesta de error
-        return validation_response
-    
-    # Valida que el usuario autenticado sea de tipo estudiante
-    validation_response = validate_user_type(request.user, 'student')
     
     # Verifica si hay errores en la validación
     if validation_response:
@@ -421,6 +421,14 @@ def add_company_data(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_company_data(request):
+    # Valida que el usuario autenticado sea de tipo compañia
+    validation_response = validate_user_type(request.user, 'company')
+    
+    # Verifica si hay errores en la validación
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+
     # Obtener los datos de la compañia
     company_data = get_model_data(Company, 'user', request.user)
 
@@ -431,14 +439,6 @@ def get_company_data(request):
 
     # Valida que el usuario sea el creador
     validation_response = validate_user_is_creator(company_data, request.user)
-    
-    # Verifica si hay errores en la validación
-    if validation_response:
-        # Retorna la respuesta de error
-        return validation_response
-    
-    # Valida que el usuario autenticado sea de tipo compañia
-    validation_response = validate_user_type(request.user, 'company')
     
     # Verifica si hay errores en la validación
     if validation_response:
@@ -463,6 +463,14 @@ def get_company_data(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def update_company_data(request):
+    # Valida que el usuario autenticado sea de tipo compañia
+    validation_response = validate_user_type(request.user, 'company')
+    
+    # Verifica si hay errores en la validación
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+
     # Obtener los datos de la compañia
     company_data = get_model_data(Company, 'user', request.user)
 
@@ -473,14 +481,6 @@ def update_company_data(request):
 
     # Valida que el usuario sea el creador
     validation_response = validate_user_is_creator(company_data, request.user)
-    
-    # Verifica si hay errores en la validación
-    if validation_response:
-        # Retorna la respuesta de error
-        return validation_response
-    
-    # Valida que el usuario autenticado sea de tipo company
-    validation_response = validate_user_type(request.user, 'company')
     
     # Verifica si hay errores en la validación
     if validation_response:
