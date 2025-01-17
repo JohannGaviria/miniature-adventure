@@ -6,7 +6,9 @@ from rest_framework import status
 from apps.core.utils.validator_user_type import validate_user_type
 from apps.core.utils.serializer_validation import serializer_validation
 from apps.core.utils.validate_user_profile import validate_user_profile
-from .serializers import JobOfferValidationSerializer
+from apps.core.utils.get_model_data import get_model_data
+from apps.core.utils.validate_uuid import validate_uuid
+from .serializers import JobOfferValidationSerializer, JobOfferResponseSerializer
 from .models import JobOffer
 from .utils.check_duplicate_job_offer import check_duplicate_job_offer
 from apps.users.models import Company
@@ -60,3 +62,37 @@ def create_job_offer(request):
         'status': 'success',
         'message': 'Job offer created successfully.',
     }, status=status.HTTP_201_CREATED)
+
+
+# Endpoint para obtener una oferta de trabajo
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_job_offer(request, job_offer_id):
+    # Valida que el ID tenga el formato valido
+    validation_response = validate_uuid(job_offer_id)
+    
+    # Verifica si hay errores en la validación
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+    
+    # Obtener los datos de la oferta de trabajo
+    job_offer_data = get_model_data(JobOffer, 'id', job_offer_id)
+
+    # Verifica si se obtuvo una respuesta de error en lugar de los datos
+    if isinstance(job_offer_data, Response):
+        # Si se obtuvo una respuesta de error, retornar directamente esa respuesta
+        return job_offer_data
+
+    # Serializar los datos de respuesta de la oferta de trabajo
+    job_offer_response_serializer = JobOfferResponseSerializer(job_offer_data)
+
+    # Respuesta exitosa al obtener la oferta de trabajo
+    return Response({
+        'status': 'success',
+        'message': 'Job offer was successfully obtained.',
+        'data': {
+            'job_offer': job_offer_response_serializer.data
+        }
+    }, status=status.HTTP_200_OK)
