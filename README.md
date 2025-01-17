@@ -14,6 +14,7 @@ Desarrollo de una API REST para la gestión de ofertas de trabajo entre estudian
   - [Entorno Local](#entorno-local)
 - [Endpoints](#endpoints)
   - [Usurarios](#usuarios)
+  - [Ofertas de Trabajo](#ofertas-de-trabajo)
 
 ## Instalación
 
@@ -643,6 +644,73 @@ Content-Type: application/json
 {
   "status": "success",
   "message": "Company data updated successfully."
+}
+```
+
+---
+
+### Ofertas de trabajo
+
+| Nombre | Método | URL | Descripción |
+|:------ | :----- | :-- | :---------- |
+| [Crear oferta de trabajo](#crear-oferta-de-trabajo) | `POST` | `/api/job_offers/create` | Endpoint para crear una oferta de trabajo en la API. |
+
+#### Crear oferta de trabajo
+
+##### Método HTTP
+
+```http
+POST /api/job_offers/create
+```
+
+##### Headers
+
+| Header           | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Parámetros
+
+| Parámetro     | Tipo     | Descripción                |
+| :------------ | :------- | :------------------------- |
+| `title`       | `string` | **Requerido**. Título de la oferta de trabajo |
+| `description` | `string` | **Opcional**. Descripción de la oferta de trabajo |
+| `requirements`| `string` | **Opcional**. Requisitos de la oferta de trabajo |
+| `location`    | `string` | **Requerido**. Ubicación de la oferta de trabajo |
+| `salary`      | `integer`| **Opcional**. Salario de la oferta de trabajo |
+| `work_mode`   | `string` | **Requerido**. Modalidad de trabajo (presencial, remoto, híbrido) |
+
+> **NOTA**: El parámetro `work_mode` solo acepta los siguientes valores:
+>
+> - **remote**: Indica que el modo de trabajo de la oferta es remoto.
+> - **onsite**: Indica que el modo de trabajo de la oferta es presencial.
+> - **hybrid**: Indica que el modo de trabajo de la oferta es hibrido.
+
+##### Ejemplo de solicitud
+
+```http
+Authorization: Token your_token_key
+Content-Type: application/json
+
+{
+  "title": "Test Job Offer",
+  "description": "Test Description",
+  "requirements": "Test Requirement",
+  "location": "Test Location",
+  "salary": 50000,
+  "work_mode": "hybrid",
+}
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+  "status": "success",
+  "message": "Job offer created successfully."
 }
 ```
 
