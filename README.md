@@ -654,6 +654,7 @@ Content-Type: application/json
 | Nombre | Método | URL | Descripción |
 |:------ | :----- | :-- | :---------- |
 | [Crear oferta de trabajo](#crear-oferta-de-trabajo) | `POST` | `/api/job_offers/create` | Endpoint para crear una oferta de trabajo en la API. |
+| [Obtener oferta de trabajo](#obtener-oferta-de-trabajo) | `GET` | `/api/job_offers/get/<job_offer_id>` | Endpoint para obtener una oferta de trabajo en la API. |
 
 #### Crear oferta de trabajo
 
@@ -711,6 +712,61 @@ Content-Type: application/json
 {
   "status": "success",
   "message": "Job offer created successfully."
+}
+```
+
+#### Obtener oferta de trabajo
+
+##### Método HTTP
+
+```http
+GET /api/job_offers/get/<job_offer_id>
+```
+
+##### Headers
+
+| Header           | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Ejemplo de solicitud
+
+```http
+Authorization: Token your_token_key
+Content-Type: application/json
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "status": "success",
+  "message": "Job offer was successfully obtained.",
+  "data": {
+    "job_offer": {
+      "id": "a23cbcc5-6a30-4008-bcef-4536414e744f",
+      "company": {
+        "id": 1,
+        "name": "Test Name Company",
+        "industry": "Test Industry",
+        "location": "Test Location",
+        "description": "Test Description",
+        "user": 1
+      },
+      "title": "Test Title",
+      "description": "Test Description",
+      "requirements": "Test Requirements",
+      "location": "Test Location",
+      "work_mode": "hybrid",
+      "salary": "3500000.00",
+      "is_closed": false,
+      "created_at": "2025-01-17T00:54:21.582748Z",
+      "updated_at": "2025-01-17T00:54:21.582789Z"
+    }
+  }
 }
 ```
 
