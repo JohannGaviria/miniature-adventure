@@ -8,10 +8,11 @@ from apps.core.utils.serializer_validation import serializer_validation
 from apps.core.utils.validate_user_profile import validate_user_profile
 from apps.core.utils.get_model_data import get_model_data
 from apps.core.utils.validate_uuid import validate_uuid
+from apps.core.utils.custom_pagination import CustomPageNumberPagination
 from .serializers import JobOfferValidationSerializer, JobOfferResponseSerializer
 from .models import JobOffer
 from .utils.check_duplicate_job_offer import check_duplicate_job_offer
-from apps.users.models import Company
+from config.settings.base import REST_FRAMEWORK
 
 
 # Endpoint para crear una oferta de trabajo
@@ -94,5 +95,38 @@ def get_job_offer(request, job_offer_id):
         'message': 'Job offer was successfully obtained.',
         'data': {
             'job_offer': job_offer_response_serializer.data
+        }
+    }, status=status.HTTP_200_OK)
+
+
+# Endpoint para obtener todas las ofertas de trabajo
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_all_job_offers(request):
+    # Obtener todas las ofertas de trabajo
+    job_offers = JobOffer.objects.all().order_by('id')
+
+    # Crea la paginacion de los datos obtenidos
+    paginator = CustomPageNumberPagination()
+    paginated_queryset = paginator.paginate_queryset(job_offers, request)
+
+    # Serializa los datos de las ofertas de trabajo
+    job_offer_response_serializer = JobOfferResponseSerializer(paginated_queryset, many=True)
+
+    # Obtiene la respuesta con los datos paginados
+    response_data = paginator.get_paginated_response(job_offer_response_serializer.data)
+
+    # Respuesta exitosa al obtener las ofertas de trabajo
+    return Response({
+        'status': 'success',
+        'message': 'The job offers were successfully obtained.',
+        'data': {
+            'page_info': {
+                'count': response_data['count'],
+                'page_size': int(request.query_params.get('page_size', REST_FRAMEWORK['PAGE_SIZE'])),
+                'links': response_data['links']
+            },
+            'job_offers': response_data['results']
         }
     }, status=status.HTTP_200_OK)
