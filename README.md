@@ -99,8 +99,6 @@ python manage.py runserver --settings=config.settings.development
 
 ## Endpoints
 
-[![Postman](https://img.shields.io/badge/Ver-Documentacion-FF6C37?style=for-the-badge&logo=postman&logoColor=white)](https://documenter.getpostman.com/view/38982911/2sAYQZGrs8)
-
 ### Usuarios
 
 | Nombre | Método | URL | Descripción |
@@ -655,6 +653,7 @@ Content-Type: application/json
 |:------ | :----- | :-- | :---------- |
 | [Crear oferta de trabajo](#crear-oferta-de-trabajo) | `POST` | `/api/job_offers/create` | Endpoint para crear una oferta de trabajo en la API. |
 | [Obtener oferta de trabajo](#obtener-oferta-de-trabajo) | `GET` | `/api/job_offers/get/<job_offer_id>` | Endpoint para obtener una oferta de trabajo en la API. |
+| [Obtener todas las ofertas de trabajo](#obtener-todas-las-ofertas-de-trabajo) | `GET` | `/api/job_offers/all` | Endpoint para obtener todas las ofertas de trabajo en la API. |
 
 #### Crear oferta de trabajo
 
@@ -767,6 +766,117 @@ Content-Type: application/json
       "updated_at": "2025-01-17T00:54:21.582789Z"
     }
   }
+}
+```
+
+#### Obtener todas las ofertas de trabajo
+
+##### Método HTTP
+
+```http
+GET /api/job_offers/all
+```
+
+##### Headers
+
+| Header           | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Query Params
+
+| Query Params     | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `size_value` | `int` | **Opcional** Valor del tamaño de elementos por página |
+| `page_value` | `int` | **Opcional** Valor de la página para navegar entre la paginación |
+
+> **NOTA**: Si los parámetros `page_size` y `page` no se incluyen en la URL, se aplicarán valores por defecto:
+>
+> - **Ejemplo**: `GET /api/job_offers/all`
+>   - **page_size** será `10`, lo que significa que se mostrarán 10 elementos por página.
+>   - **page** será `1`, comenzando en la primera página de la paginación.
+>
+> **Recomendación**: Para navegar entre las páginas, debe incluir el parámetro `page` e indicar el número de la página a la que desea acceder.
+
+##### Ejemplo de solicitud
+
+```http
+Authorization: Token your_token_key
+Content-Type: application/json
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "status": "success",
+  "message": "The job offers were successfully obtained.",
+  "data": {
+    "page_info": {
+      "count": 2,
+      "page_size": 10,
+      "links": {
+        "next": null,
+        "previous": null
+      }
+    },
+    "job_offers": [
+      {
+        "id": "a23cbcc5-6a30-4008-bcef-4536414e744f",
+        "company": {
+          "id": 1,
+          "name": "Test Name Company",
+          "industry": "Test Industry",
+          "location": "Test Location",
+          "description": "Test Description",
+          "user": 1
+        },
+        "title": "Test Job Offer 1",
+        "description": "Test Description 1",
+        "requirements": "Test Requirement 1",
+        "location": "Test Location 1",
+        "work_mode": "hybrid",
+        "salary": "50000.00",
+        "is_closed": false,
+        "created_at": "2025-01-17T00:54:21.582748Z",
+        "updated_at": "2025-01-17T00:54:21.582789Z"
+      },
+      {
+        "id": "b23cbcc5-6a30-4008-bcef-4536414e744f",
+        "company": {
+          "id": 1,
+          "name": "Test Name Company",
+          "industry": "Test Industry",
+          "location": "Test Location",
+          "description": "Test Description",
+          "user": 1
+        },
+        "title": "Test Job Offer 2",
+        "description": "Test Description 2",
+        "requirements": "Test Requirement 2",
+        "location": "Test Location 2",
+        "work_mode": "remote",
+        "salary": "60000.00",
+        "is_closed": false,
+        "created_at": "2025-01-17T00:54:21.582748Z",
+        "updated_at": "2025-01-17T00:54:21.582789Z"
+      }
+    ]
+  }
+}
+```
+
+##### Ejemplo de respuesta de error (sin token de autenticación)
+
+```http
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json
+
+{
+  "detail": "Authentication credentials were not provided."
 }
 ```
 
