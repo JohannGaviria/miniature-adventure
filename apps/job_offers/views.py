@@ -130,3 +130,62 @@ def get_all_job_offers(request):
             'job_offers': response_data['results']
         }
     }, status=status.HTTP_200_OK)
+
+
+# Endpoint para filtrar ofertas de trabajo
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def filter_job_offers(request):
+    # Obtiene los parámetros de filtro de la solicitud
+    filters = {
+        'location__icontains': request.query_params.get('location'),
+        'company__name__icontains': request.query_params.get('company'),
+        'salary__gte': request.query_params.get('min_salary'),
+        'salary__lte': request.query_params.get('max_salary'),
+        'requirements__icontains': request.query_params.get('requirements'),
+        'is_closed': request.query_params.get('is_closed'),
+        'created_at__date': request.query_params.get('created_at'),
+        'updated_at__date': request.query_params.get('updated_at')
+    }
+
+    # Elimina filtros con valores None
+    filters = {key: value for key, value in filters.items() if value is not None}
+
+    # Capitaliza el valor booleano de is_closed
+    if 'is_closed' in filters:
+        filters['is_closed'] = filters['is_closed'].capitalize()
+
+    # Filtrar las ofertas de trabajo según los parámetros proporcionados
+    job_offers = JobOffer.objects.filter(**filters).order_by('id')
+
+    # Respuesta de error si no se encontraron ofertas de trabajo
+    if not job_offers:
+        return Response({
+            'status': 'error',
+            'message': 'No job offers found with the specified filters.'
+        }, status=status.HTTP_404_NOT_FOUND)
+
+    # Crea la paginación de los datos obtenidos
+    paginator = CustomPageNumberPagination()
+    paginated_queryset = paginator.paginate_queryset(job_offers, request)
+
+    # Serializa los datos de las ofertas de trabajo
+    job_offer_response_serializer = JobOfferResponseSerializer(paginated_queryset, many=True)
+
+    # Obtiene la respuesta con los datos paginados
+    response_data = paginator.get_paginated_response(job_offer_response_serializer.data)
+
+    # Respuesta exitosa al obtener las ofertas de trabajo filtradas
+    return Response({
+        'status': 'success',
+        'message': 'The job offers were successfully obtained.',
+        'data': {
+            'page_info': {
+                'count': response_data['count'],
+                'page_size': int(request.query_params.get('page_size', REST_FRAMEWORK['PAGE_SIZE'])),
+                'links': response_data['links']
+            },
+            'job_offers': response_data['results']
+        }
+    }, status=status.HTTP_200_OK)
