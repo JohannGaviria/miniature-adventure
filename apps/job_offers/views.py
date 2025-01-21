@@ -144,6 +144,7 @@ def filter_job_offers(request):
         'salary__gte': request.query_params.get('min_salary'),
         'salary__lte': request.query_params.get('max_salary'),
         'requirements__icontains': request.query_params.get('requirements'),
+        'work_mode__icontains': request.query_params.get('work_mode'),
         'is_closed': request.query_params.get('is_closed'),
         'created_at__date': request.query_params.get('created_at'),
         'updated_at__date': request.query_params.get('updated_at')
