@@ -654,6 +654,7 @@ Content-Type: application/json
 | [Crear oferta de trabajo](#crear-oferta-de-trabajo) | `POST` | `/api/job_offers/create` | Endpoint para crear una oferta de trabajo en la API. |
 | [Obtener oferta de trabajo](#obtener-oferta-de-trabajo) | `GET` | `/api/job_offers/get/<job_offer_id>` | Endpoint para obtener una oferta de trabajo en la API. |
 | [Obtener todas las ofertas de trabajo](#obtener-todas-las-ofertas-de-trabajo) | `GET` | `/api/job_offers/all` | Endpoint para obtener todas las ofertas de trabajo en la API. |
+| [Filtrar ofertas de trabajo](#filtrar-ofertas-de-trabajo) | `GET` | `/api/job_offers/filter` | Endpoint para filtrar ofertas de trabajo en la API. |
 
 #### Crear oferta de trabajo
 
@@ -877,6 +878,104 @@ Content-Type: application/json
 
 {
   "detail": "Authentication credentials were not provided."
+}
+```
+
+#### Filtrar ofertas de trabajo
+
+##### Método HTTP
+
+```http
+GET /api/job_offers/filter
+```
+
+##### Headers
+
+| Header           | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Query Params
+
+| Query Params     | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `location`       | `string` | **Opcional**. Ubicación de la oferta de trabajo |
+| `company`        | `string` | **Opcional**. Nombre de la compañía |
+| `min_salary`     | `integer`| **Opcional**. Salario mínimo de la oferta de trabajo |
+| `max_salary`     | `integer`| **Opcional**. Salario máximo de la oferta de trabajo |
+| `requirements`   | `string` | **Opcional**. Requisitos de la oferta de trabajo |
+| `is_closed`      | `boolean`| **Opcional**. Estado de cierre de la oferta de trabajo |
+| `created_at`     | `date`   | **Opcional**. Fecha de creación de la oferta de trabajo (YYYY-MM-DD) |
+| `updated_at`     | `date`   | **Opcional**. Fecha de actualización de la oferta de trabajo (YYYY-MM-DD) |
+
+##### Ejemplo de solicitud
+
+```http
+Authorization: Token your_token_key
+Content-Type: application/json
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "status": "success",
+  "message": "The job offers were successfully obtained.",
+  "data": {
+    "page_info": {
+      "count": 2,
+      "page_size": 10,
+      "links": {
+        "next": null,
+        "previous": null
+      }
+    },
+    "job_offers": [
+      {
+        "id": "a23cbcc5-6a30-4008-bcef-4536414e744f",
+        "company": {
+          "id": 1,
+          "name": "Test Name Company",
+          "industry": "Test Industry",
+          "location": "Test Location",
+          "description": "Test Description",
+          "user": 1
+        },
+        "title": "Test Job Offer 1",
+        "description": "Test Description 1",
+        "requirements": "Test Requirement 1",
+        "location": "Test Location 1",
+        "work_mode": "hybrid",
+        "salary": "50000.00",
+        "is_closed": false,
+        "created_at": "2025-01-17T00:54:21.582748Z",
+        "updated_at": "2025-01-17T00:54:21.582789Z"
+      },
+      {
+        "id": "b23cbcc5-6a30-4008-bcef-4536414e744f",
+        "company": {
+          "id": 1,
+          "name": "Test Name Company",
+          "industry": "Test Industry",
+          "location": "Test Location",
+          "description": "Test Description",
+          "user": 1
+        },
+        "title": "Test Job Offer 2",
+        "description": "Test Description 2",
+        "requirements": "Test Requirement 2",
+        "location": "Test Location 2",
+        "work_mode": "remote",
+        "salary": "60000.00",
+        "is_closed": false,
+        "created_at": "2025-01-17T00:54:21.582748Z",
+        "updated_at": "2025-01-17T00:54:21.582789Z"
+      }
+    ]
+  }
 }
 ```
 
