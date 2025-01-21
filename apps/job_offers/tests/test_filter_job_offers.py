@@ -114,6 +114,21 @@ class FilterJobOffersTestCase(TestCase):
         self.assertEqual(len(response.data['data']['job_offers']), 1)
 
 
+    def test_filter_job_offers_by_work_mode(self):
+        """
+        Prueba de filtrado de ofertas de trabajo por modo de trabajo.
+
+        Verifica que el endpoint responda con un código de estado
+        200 cuando se filtran correctamente las ofertas de trabajo por modo de trabajo.
+        """
+        response = self.client.get(self.url, {'work_mode': 'hybrid'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue('status' in response.data)
+        self.assertTrue('message' in response.data)
+        self.assertTrue('data' in response.data)
+        self.assertEqual(len(response.data['data']['job_offers']), 1)
+
+
     def test_filter_job_offers_by_is_closed(self):
         """
         Prueba de filtrado de ofertas de trabajo por estado de cierre.
