@@ -870,17 +870,6 @@ Content-Type: application/json
 }
 ```
 
-##### Ejemplo de respuesta de error (sin token de autenticación)
-
-```http
-HTTP/1.1 401 Unauthorized
-Content-Type: application/json
-
-{
-  "detail": "Authentication credentials were not provided."
-}
-```
-
 #### Filtrar ofertas de trabajo
 
 ##### Método HTTP
