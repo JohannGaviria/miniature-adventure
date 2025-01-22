@@ -302,8 +302,56 @@ def close_job_offer(request, job_offer_id):
     job_offer_data.is_closed = True
     job_offer_data.save()
 
-    # - Respuesta exitosa al cerrar la oferta de trabajo
+    # Respuesta exitosa al cerrar la oferta de trabajo
     return Response({
         'status': 'success',
         'message': 'Job offer closed successfully.'
     }, status=status.HTTP_200_OK)
+
+
+# Endpoint para eliminar una oferta de trabajo
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_job_offer(request, job_offer_id):    
+    # Valida que el ID tenga el formato valido
+    validation_response = validate_uuid(job_offer_id)
+
+    # Verifica si hay errores en la validacion
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+
+    # Valida que el usuario autenticado sea de tipo compañia
+    validation_response = validate_user_type(request.user, 'company')
+
+    # Verifica si hay errores en la validacion
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+
+    # Obtiene los datos de la oferta de trabajo
+    job_offer_data = get_model_data(JobOffer, 'id', job_offer_id)
+
+    # Verifica si se obtuvo una respuesta de error en lugar de los datos
+    if isinstance(job_offer_data, Response):
+        # Si se obtuvo una respuesta de error, retornar directamente esa respuesta
+        return job_offer_data
+
+    # Valida que el usuario autenticado sea el creador de la oferta de trabajo
+    validation_response = validate_user_is_creator(job_offer_data.company, request.user)
+
+    # Verifica si hay errores en la validacion
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+
+    # Elimina la oferta de trabajo
+    job_offer_data.delete()
+    
+    # Respuesta exitosa al eliminar la oferta de trabajo
+    return Response({
+        'status': 'success',
+        'message': 'Job offer deleted successfully.'
+    }, status=status.HTTP_200_OK)
+
