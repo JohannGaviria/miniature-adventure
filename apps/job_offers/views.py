@@ -266,9 +266,6 @@ def update_job_offer(request, job_offer_id):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def close_job_offer(request, job_offer_id):
-    # CheckList:
-    # - Validar que el ID tenga el formato valido
-
     # Valida que el ID tenga el formato valido
     validation_response = validate_uuid(job_offer_id)
 
@@ -276,8 +273,6 @@ def close_job_offer(request, job_offer_id):
     if validation_response:
         # Retorna la respuesta de error
         return validation_response
-
-    # - Validar que el usuario sea tipo compañia
 
     # Valida que el usuario autenticado sea de tipo compañia
     validation_response = validate_user_type(request.user, 'company')
@@ -287,8 +282,6 @@ def close_job_offer(request, job_offer_id):
         # Retorna la respuesta de error
         return validation_response
 
-    # - Obtener los datos de la oferta de trabajo
-
     # Obtiene los datos de la oferta de trabajo
     job_offer_data = get_model_data(JobOffer, 'id', job_offer_id)
 
@@ -297,8 +290,6 @@ def close_job_offer(request, job_offer_id):
         # Si se obtuvo una respuesta de error, retornar directamente esa respuesta
         return job_offer_data
 
-    # - Validar que el usuario autenticado sea el creador de la oferta de trabajo
-
     # Valida que el usuario autenticado sea el creador de la oferta de trabajo
     validation_response = validate_user_is_creator(job_offer_data.company, request.user)
 
@@ -306,8 +297,6 @@ def close_job_offer(request, job_offer_id):
     if validation_response:
         # Retorna la respuesta de error
         return validation_response
-
-    # - Cerrar la oferta de trabajo
 
     # Cierra la oferta de trabajo
     job_offer_data.is_closed = True
