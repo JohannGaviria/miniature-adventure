@@ -656,6 +656,7 @@ Content-Type: application/json
 | [Obtener todas las ofertas de trabajo](#obtener-todas-las-ofertas-de-trabajo) | `GET` | `/api/job_offers/all` | Endpoint para obtener todas las ofertas de trabajo en la API. |
 | [Filtrar ofertas de trabajo](#filtrar-ofertas-de-trabajo) | `GET` | `/api/job_offers/filter` | Endpoint para filtrar ofertas de trabajo en la API. |
 | [Actualizar oferta de trabajo](#actualizar-oferta-de-trabajo) | `PUT` | `/api/job_offers/update/<job_offer_id>` | Endpoint para actualizar una oferta de trabajo en la API. |
+| [Cerrar oferta de trabajo](#cerrar-oferta-de-trabajo) | `PUT` | `/api/job_offers/close/<job_offer_id>` | Endpoint para cerrar una oferta de trabajo en la API. |
 
 #### Crear oferta de trabajo
 
@@ -1035,6 +1036,39 @@ Content-Type: application/json
 {
   "status": "success",
   "message": "Job offer updated successfully."
+}
+```
+
+#### Cerrar oferta de trabajo
+
+##### Método HTTP
+
+```http
+PUT /api/job_offers/close/<job_offer_id>
+```
+
+##### Headers
+
+| Header           | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Ejemplo de solicitud
+
+```http
+Authorization: Token your_token_key
+Content-Type: application/json
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "status": "success",
+  "message": "Job offer closed successfully."
 }
 ```
 
