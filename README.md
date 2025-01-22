@@ -657,6 +657,7 @@ Content-Type: application/json
 | [Filtrar ofertas de trabajo](#filtrar-ofertas-de-trabajo) | `GET` | `/api/job_offers/filter` | Endpoint para filtrar ofertas de trabajo en la API. |
 | [Actualizar oferta de trabajo](#actualizar-oferta-de-trabajo) | `PUT` | `/api/job_offers/update/<job_offer_id>` | Endpoint para actualizar una oferta de trabajo en la API. |
 | [Cerrar oferta de trabajo](#cerrar-oferta-de-trabajo) | `PUT` | `/api/job_offers/close/<job_offer_id>` | Endpoint para cerrar una oferta de trabajo en la API. |
+| [Eliminar oferta de trabajo](#eliminar-oferta-de-trabajo) | `DELETE` | `/api/job_offers/delete/<job_offer_id>` | Endpoint para eliminar una oferta de trabajo en la API. |
 
 #### Crear oferta de trabajo
 
@@ -730,6 +731,12 @@ GET /api/job_offers/get/<job_offer_id>
 | Header           | Tipo     | Descripción                |
 | :--------------- | :------- | :------------------------- |
 | `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Query Params
+
+| Query Params     | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `job_offer_id`       | `string` | **Requerid**. Uuid de la oferta de trabajo |
 
 ##### Ejemplo de solicitud
 
@@ -994,6 +1001,12 @@ PUT /api/job_offers/update/<job_offer_id>
 | :--------------- | :------- | :------------------------- |
 | `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
 
+##### Query Params
+
+| Query Params     | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `job_offer_id`       | `string` | **Requerid**. Uuid de la oferta de trabajo |
+
 ##### Parámetros
 
 | Parámetro     | Tipo     | Descripción                |
@@ -1053,6 +1066,12 @@ PUT /api/job_offers/close/<job_offer_id>
 | :--------------- | :------- | :------------------------- |
 | `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
 
+##### Query Params
+
+| Query Params     | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `job_offer_id`       | `string` | **Requerid**. Uuid de la oferta de trabajo |
+
 ##### Ejemplo de solicitud
 
 ```http
@@ -1069,6 +1088,39 @@ Content-Type: application/json
 {
   "status": "success",
   "message": "Job offer closed successfully."
+}
+```
+
+#### Eliminar oferta de trabajo
+
+##### Método HTTP
+
+```http
+DELETE /api/job_offers/delete/<job_offer_id>
+```
+
+##### Headers
+
+| Header           | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Ejemplo de solicitud
+
+```http
+Authorization: Token your_token_key
+Content-Type: application/json
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "status": "success",
+  "message": "Job offer deleted successfully."
 }
 ```
 
