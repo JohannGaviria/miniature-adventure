@@ -33,6 +33,7 @@ LOCAL_APPS = [
     'apps.core',
     'apps.users',
     'apps.job_offers',
+    'apps.postulations',
 ]
 
 THIRD_APPS = [
