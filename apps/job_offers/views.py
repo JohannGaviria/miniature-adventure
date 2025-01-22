@@ -8,6 +8,7 @@ from apps.core.utils.serializer_validation import serializer_validation
 from apps.core.utils.validate_user_profile import validate_user_profile
 from apps.core.utils.get_model_data import get_model_data
 from apps.core.utils.validate_uuid import validate_uuid
+from apps.core.utils.validate_user_is_creator import validate_user_is_creator
 from apps.core.utils.custom_pagination import CustomPageNumberPagination
 from .serializers import JobOfferValidationSerializer, JobOfferResponseSerializer
 from .models import JobOffer
@@ -189,4 +190,72 @@ def filter_job_offers(request):
             },
             'job_offers': response_data['results']
         }
+    }, status=status.HTTP_200_OK)
+
+
+# Endpoint para editar una oferta de trabajo
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_job_offer(request, job_offer_id):
+    # Valida que el ID tenga el formato valido
+    validation_response = validate_uuid(job_offer_id)
+    
+    # Verifica si hay errores en la validación
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+    
+    # Valida que que el usuario sea tipo compañia
+    validation_response = validate_user_type(request.user, 'company')
+
+    # Verifica si hay errores en la validación
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+
+    # Obtener los datos de la oferta de trabajo
+    job_offer_data = get_model_data(JobOffer, 'id', job_offer_id)
+
+    # Verifica si se obtuvo una respuesta de error en lugar de los datos
+    if isinstance(job_offer_data, Response):
+        # Si se obtuvo una respuesta de error, retornar directamente esa respuesta
+        return job_offer_data
+    
+    # Valida que el usuario autenticado sea el creador de la oferta de trabajo
+    validation_response = validate_user_is_creator(job_offer_data.company, request.user)
+    
+    # Verifica si hay errores en la validación
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+
+    # Obtiene los datos enviados en la petición
+    job_offer_validation_serializer = JobOfferValidationSerializer(job_offer_data, data=request.data, context={'request': request}, partial=True)
+
+    # Obtiene la validación del serializer
+    validation_error = serializer_validation(job_offer_validation_serializer)
+    
+    # Verifica la validación del serializer
+    if validation_error:
+        # Respuesta de error en la validación del serializer
+        return validation_error
+
+    # Verifica si 'title' está en los datos de la solicitud
+    if 'title' in request.data:
+        # Si 'title' está presente, entonces validar si la oferta está duplicada
+        validation_error = check_duplicate_job_offer(request.data['title'], request.user.company)
+        
+        # Verifica si hay errores en la validación
+        if validation_error:
+            # Respuesta de error en la validación de duplicados
+            return validation_error
+
+    # Guarda la oferta de trabajo en la base de datos
+    job_offer_validation_serializer.save()
+
+    # Respuesta exitosa al editar la oferta de trabajo
+    return Response({
+        'status': 'success',
+        'message': 'Job offer updated successfully.'
     }, status=status.HTTP_200_OK)
