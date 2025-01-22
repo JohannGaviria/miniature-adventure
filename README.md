@@ -655,6 +655,7 @@ Content-Type: application/json
 | [Obtener oferta de trabajo](#obtener-oferta-de-trabajo) | `GET` | `/api/job_offers/get/<job_offer_id>` | Endpoint para obtener una oferta de trabajo en la API. |
 | [Obtener todas las ofertas de trabajo](#obtener-todas-las-ofertas-de-trabajo) | `GET` | `/api/job_offers/all` | Endpoint para obtener todas las ofertas de trabajo en la API. |
 | [Filtrar ofertas de trabajo](#filtrar-ofertas-de-trabajo) | `GET` | `/api/job_offers/filter` | Endpoint para filtrar ofertas de trabajo en la API. |
+| [Actualizar oferta de trabajo](#actualizar-oferta-de-trabajo) | `PUT` | `/api/job_offers/update/<job_offer_id>` | Endpoint para actualizar una oferta de trabajo en la API. |
 
 #### Crear oferta de trabajo
 
@@ -788,8 +789,8 @@ GET /api/job_offers/all
 
 | Query Params     | Tipo     | Descripción                |
 | :--------------- | :------- | :------------------------- |
-| `size_value` | `int` | **Opcional** Valor del tamaño de elementos por página |
-| `page_value` | `int` | **Opcional** Valor de la página para navegar entre la paginación |
+| `size_value` | `int` | **Opcional**. Valor del tamaño de elementos por página |
+| `page_value` | `int` | **Opcional**. Valor de la página para navegar entre la paginación |
 
 > **NOTA**: Si los parámetros `page_size` y `page` no se incluyen en la URL, se aplicarán valores por defecto:
 >
@@ -894,8 +895,18 @@ GET /api/job_offers/filter
 | `max_salary`     | `integer`| **Opcional**. Salario máximo de la oferta de trabajo |
 | `requirements`   | `string` | **Opcional**. Requisitos de la oferta de trabajo |
 | `is_closed`      | `boolean`| **Opcional**. Estado de cierre de la oferta de trabajo |
-| `created_at`     | `date`   | **Opcional**. Fecha de creación de la oferta de trabajo (YYYY-MM-DD) |
-| `updated_at`     | `date`   | **Opcional**. Fecha de actualización de la oferta de trabajo (YYYY-MM-DD) |
+| `created_at`     | `date`   | **Opcional**. Fecha de creación de la oferta de trabajo |
+| `updated_at`     | `date`   | **Opcional**. Fecha de actualización de la oferta de trabajo |
+| `size_value`     | `int`    | **Opcional**. Valor del tamaño de elementos por página |
+| `page_value`     | `int`    | **Opcional**. Valor de la página para navegar entre la paginación |
+
+> **NOTA**: Si los parámetros `page_size` y `page` no se incluyen en la URL, se aplicarán valores por defecto:
+>
+> - **Ejemplo**: `GET /api/job_offers/all`
+>   - **page_size** será `10`, lo que significa que se mostrarán 10 elementos por página.
+>   - **page** será `1`, comenzando en la primera página de la paginación.
+>
+> **Recomendación**: Para navegar entre las páginas, debe incluir el parámetro `page` e indicar el número de la página a la que desea acceder.
 
 ##### Ejemplo de solicitud
 
@@ -965,6 +976,65 @@ Content-Type: application/json
       }
     ]
   }
+}
+```
+
+#### Actualizar oferta de trabajo
+
+##### Método HTTP
+
+```http
+PUT /api/job_offers/update/<job_offer_id>
+```
+
+##### Headers
+
+| Header           | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Parámetros
+
+| Parámetro     | Tipo     | Descripción                |
+| :------------ | :------- | :------------------------- |
+| `title`       | `string` | **Opcional**. Título de la oferta de trabajo |
+| `description` | `string` | **Opcional**. Descripción de la oferta de trabajo |
+| `requirements`| `string` | **Opcional**. Requisitos de la oferta de trabajo |
+| `location`    | `string` | **Opcional**. Ubicación de la oferta de trabajo |
+| `salary`      | `integer`| **Opcional**. Salario de la oferta de trabajo |
+| `work_mode`   | `string` | **Opcional**. Modalidad de trabajo (presencial, remoto, híbrido) |
+
+> **NOTA**: El parámetro `work_mode` solo acepta los siguientes valores:
+>
+> - **remote**: Indica que el modo de trabajo de la oferta es remoto.
+> - **onsite**: Indica que el modo de trabajo de la oferta es presencial.
+> - **hybrid**: Indica que el modo de trabajo de la oferta es hibrido.
+
+##### Ejemplo de solicitud
+
+```http
+Authorization: Token your_token_key
+Content-Type: application/json
+
+{
+  "title": "Updated Job Offer",
+  "description": "Updated Description",
+  "requirements": "Updated Requirement",
+  "location": "Updated Location",
+  "salary": 60000,
+  "work_mode": "remote"
+}
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "status": "success",
+  "message": "Job offer updated successfully."
 }
 ```
 
