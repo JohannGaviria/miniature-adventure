@@ -8,9 +8,12 @@ from apps.core.utils.validator_user_type import validate_user_type
 from apps.core.utils.validate_user_profile import validate_user_profile
 from apps.core.utils.get_model_data import get_model_data
 from apps.core.utils.serializer_validation import serializer_validation
+from apps.core.utils.validate_user_is_creator import validate_user_is_creator
+from apps.core.utils.custom_pagination import CustomPageNumberPagination
 from apps.job_offers.models import JobOffer
-from .serializers import PostulationValidationSerializer
+from .serializers import PostulationValidationSerializer, PostulationsResponseSerializer
 from .models import Postulation
+from config.settings.base import REST_FRAMEWORK
 
 
 # Endpoint para la postulación a una oferta de trabajo
@@ -147,4 +150,93 @@ def withdraw_postulation(request, job_offer_id):
     return Response({
         'status': 'success',
         'message': 'Postulation withdrawn successfully'
+    }, status=status.HTTP_200_OK)
+
+
+# Endpoint para obtener las postulaciones a una oferta de trabajo
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_postulations(request, job_offer_id):
+    # CheckList:
+
+    # Valida que el ID tenga el formato valido
+    validation_response = validate_uuid(job_offer_id)
+
+    # Verifica si hay errores en la validacion
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+
+    # - Validar que el usuario autenticado sea de tipo compañia
+
+    # Valida que el usuario autenticado sea de tipo compañia
+    validation_response = validate_user_type(request.user, 'company')
+
+    # Verifica si hay errores en la validacion
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+
+    # - Validar que el usuario autenticado tenga un perfil de compañia asociado
+
+    # Valida que el usuario autenticado tenga un perfil de compañia asociado
+    validation_response = validate_user_profile(request.user, 'company')
+
+    # Verifica si hay errores en la validacion
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+
+    # - Obtener los datos de la oferta de trabajo
+
+    # Obtiene los datos de la oferta de trabajo
+    job_offer_data = get_model_data(JobOffer, 'id', job_offer_id)
+
+    # Verifica si se obtuvo una respuesta de error en lugar de los datos
+    if isinstance(job_offer_data, Response):
+        # Si se obtuvo una respuesta de error, retornar directamente esa respuesta
+        return job_offer_data
+
+    # - Validar que la oferta de trabajo pertenezca a la compañia del usuario autenticado
+
+    # Valida que la oferta de trabajo pertenezca a la compañia del usuario autenticado
+    validation_response = validate_user_is_creator(job_offer_data.company, request.user)
+
+    # Verifica si hay errores en la validacion
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+
+    # - Obtener las postulaciones a la oferta de trabajo
+
+    # Obtiene las postulaciones a la oferta de trabajo
+    postulations = Postulation.objects.filter(job_offer=job_offer_id).order_by('id')
+
+    # - Serializar los datos de las postulaciones
+
+    # Serializa los datos de las postulaciones
+
+    # Crea la paginacion de los datos obtenidos
+    paginator = CustomPageNumberPagination()
+    paginated_queryset = paginator.paginate_queryset(postulations, request)
+
+    # Serializa los datos de las ofertas de trabajo
+    postulation_response_serializer = PostulationsResponseSerializer(paginated_queryset, many=True)
+
+    # Obtiene la respuesta con los datos paginados
+    response_data = paginator.get_paginated_response(postulation_response_serializer.data)
+
+    # Respuesta exitosa al obtener las ofertas de trabajo
+    return Response({
+        'status': 'success',
+        'message': 'The job offers were successfully obtained.',
+        'data': {
+            'page_info': {
+                'count': response_data['count'],
+                'page_size': int(request.query_params.get('page_size', REST_FRAMEWORK['PAGE_SIZE'])),
+                'links': response_data['links']
+            },
+            'postulations': response_data['results']
+        }
     }, status=status.HTTP_200_OK)
