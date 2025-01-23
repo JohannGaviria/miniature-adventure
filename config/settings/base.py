@@ -1,28 +1,27 @@
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 load_dotenv(Path.joinpath(BASE_DIR, '.env'))
 
-SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_PASSWORD_SALT')
 
-FRONTEND_URL = os.environ.get('FRONTEND_URL')
-
-DEFAULT_AUTO_FIELD = os.environ.get('EMAIL_HOST_USER')
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = DEFAULT_AUTO_FIELD
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+# configuración de cloudinary para almacenar archivos
+cloudinary.config(
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET")
+)
 
 
 # Application definition
 BASE_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -32,6 +31,9 @@ BASE_APPS = [
 
 LOCAL_APPS = [
     'apps.core',
+    'apps.users',
+    'apps.job_offers',
+    'apps.postulations',
 ]
 
 THIRD_APPS = [
@@ -80,6 +82,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+
+# Configuración de rest framework para manejar paginacion
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'apps.core.utils.custom_pagination.CustomPageNumberPagination',
+    'PAGE_SIZE': 10,
+}
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -97,6 +106,9 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+AUTH_USER_MODEL = 'users.CustomUser'
 
 
 # Internationalization
