@@ -30,3 +30,18 @@ class PostulationValidationSerializer(serializers.ModelSerializer):
         validated_data['job_offer'] = self.context['job_offer']
         return super().create(validated_data)
 
+
+class PostulationsResponseSerializer(serializers.ModelSerializer):
+    """
+    Serializador para la respuesta de postulaciones.
+    """
+    class Meta:
+        """
+        Metadatos del serializador.
+
+        Attributes:
+            model (Postulation): Modelo de postulación.
+            fields (list): Campos del serializador.
+        """
+        model = Postulation
+        fields = '__all__'
