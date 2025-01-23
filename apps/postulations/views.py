@@ -59,7 +59,7 @@ def postulate_job_offer(request, job_offer_id):
         }, status=status.HTTP_400_BAD_REQUEST)
 
     # Valida que el usuario no haya postulado a la oferta de trabajo
-    if Postulation.objects.filter(job_offer_id=job_offer_id).exists():
+    if Postulation.objects.filter(job_offer_id=job_offer_id, student=request.user.student).exists():
         # Respuesta de error al intentar postular a una oferta de trabajo a la que ya se postulo
         return Response({
             'status': 'error',
@@ -86,3 +86,65 @@ def postulate_job_offer(request, job_offer_id):
         'message': 'Postulation created successfully'
     }, status=status.HTTP_201_CREATED)
 
+
+# Endpoint para retirar la postulación a una oferta de trabajo
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def withdraw_postulation(request, job_offer_id):
+    # Valida que el ID tenga el formato valido
+    validation_response = validate_uuid(job_offer_id)
+
+    # Verifica si hay errores en la validacion
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+
+    # Valida que el usuario autenticado sea de tipo estudiante
+    validation_response = validate_user_type(request.user, 'student')
+
+    # Verifica si hay errores en la validacion
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+
+    # Valida que el usuario autenticado tenga un perfil de estudiante asociado
+    validation_response = validate_user_profile(request.user, 'student')
+
+    # Verifica si hay errores en la validacion
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+    
+    # Obtiene los datos de la oferta de trabajo
+    job_offer_data = get_model_data(JobOffer, 'id', job_offer_id)
+
+    # Verifica si se obtuvo una respuesta de error en lugar de los datos
+    if isinstance(job_offer_data, Response):
+        # Si se obtuvo una respuesta de error, retornar directamente esa respuesta
+        return job_offer_data
+
+    # Valida que la oferta de trabajo no este cerrada
+    if job_offer_data.is_closed == True:
+        # Respuesta de error al intentar retirar la postulacion a una oferta de trabajo cerrada
+        return Response({
+            'status': 'error',
+            'message': 'The job offer is closed'
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    # Valida que el usuario haya postulado a la oferta de trabajo
+    if not Postulation.objects.filter(job_offer_id=job_offer_id, student=request.user.student).exists():
+        # Respuesta de error al intentar retirar la postulacion a una oferta de trabajo a la que no se ha postulado
+        return Response({
+            'status': 'error',
+            'message': 'You have not applied to this job offer'
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    # Elimina la postulacion a la oferta de trabajo
+    Postulation.objects.filter(job_offer_id=job_offer_id, student=request.user.student).delete()
+
+    # Respuesta exitosa al retirar la postulacion
+    return Response({
+        'status': 'success',
+        'message': 'Postulation withdrawn successfully'
+    }, status=status.HTTP_200_OK)
