@@ -15,6 +15,7 @@ Desarrollo de una API REST para la gestión de ofertas de trabajo entre estudian
 - [Endpoints](#endpoints)
   - [Usurarios](#usuarios)
   - [Ofertas de Trabajo](#ofertas-de-trabajo)
+  - [Postulaciones](#postulaciones)
 
 ## Instalación
 
@@ -658,6 +659,7 @@ Content-Type: application/json
 | [Actualizar oferta de trabajo](#actualizar-oferta-de-trabajo) | `PUT` | `/api/job_offers/update/<job_offer_id>` | Endpoint para actualizar una oferta de trabajo en la API. |
 | [Cerrar oferta de trabajo](#cerrar-oferta-de-trabajo) | `PUT` | `/api/job_offers/close/<job_offer_id>` | Endpoint para cerrar una oferta de trabajo en la API. |
 | [Eliminar oferta de trabajo](#eliminar-oferta-de-trabajo) | `DELETE` | `/api/job_offers/delete/<job_offer_id>` | Endpoint para eliminar una oferta de trabajo en la API. |
+| [Postularse a una oferta de trabajo](#postularse-a-una-oferta-de-trabajo) | `POST` | `/api/postulations/postulate/<job_offer_id>` | Endpoint para postularse a una oferta de trabajo en la API. |
 
 #### Crear oferta de trabajo
 
@@ -1105,6 +1107,12 @@ DELETE /api/job_offers/delete/<job_offer_id>
 | :--------------- | :------- | :------------------------- |
 | `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
 
+##### Query Params
+
+| Query Params     | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `job_offer_id`       | `string` | **Requerid**. Uuid de la oferta de trabajo |
+
 ##### Ejemplo de solicitud
 
 ```http
@@ -1121,6 +1129,53 @@ Content-Type: application/json
 {
   "status": "success",
   "message": "Job offer deleted successfully."
+}
+```
+
+---
+
+### Postulaciones
+
+| Nombre | Método | URL | Descripción |
+|:------ | :----- | :-- | :---------- |
+| [Postularse a una oferta de trabajo](#postularse-a-una-oferta-de-trabajo) | `POST` | `/api/postulations/postulate/<job_offer_id>` | Endpoint para postularse a una oferta de trabajo en la API. |
+
+#### Postularse a una oferta de trabajo
+
+##### Método HTTP
+
+```http
+POST /api/postulations/postulate/<job_offer_id>
+```
+
+##### Headers
+
+| Header           | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Query Params
+
+| Query Params     | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `job_offer_id`       | `string` | **Requerid**. Uuid de la oferta de trabajo |
+
+##### Ejemplo de solicitud
+
+```http
+Authorization: Token your_token_key
+Content-Type: application/json
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+  "status": "success",
+  "message": "Postulation created successfully."
 }
 ```
 
