@@ -158,8 +158,6 @@ def withdraw_postulation(request, job_offer_id):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_postulations(request, job_offer_id):
-    # CheckList:
-
     # Valida que el ID tenga el formato valido
     validation_response = validate_uuid(job_offer_id)
 
@@ -239,4 +237,91 @@ def get_postulations(request, job_offer_id):
             },
             'postulations': response_data['results']
         }
+    }, status=status.HTTP_200_OK)
+
+
+# Endpoint para aceptar o rechazar una postulación a una oferta de trabajo
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def accept_reject_postulation(request, job_offer_id):
+    # Valida que el ID de la oferta de trabajo tenga el formato valido
+    validation_response = validate_uuid(job_offer_id)
+
+    # Verifica si hay errores en la validacion
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+
+    # Valida que el usuario autenticado sea de tipo compañia
+    validation_response = validate_user_type(request.user, 'company')
+
+    # Verifica si hay errores en la validacion
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+
+    # Valida que el usuario autenticado tenga un perfil de compañia asociado
+    validation_response = validate_user_profile(request.user, 'company')
+
+    # Verifica si hay errores en la validacion
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+
+    # Obtiene los datos de la oferta de trabajo
+    job_offer_data = get_model_data(JobOffer, 'id', job_offer_id)
+
+    # Verifica si se obtuvo una respuesta de error en lugar de los datos
+    if isinstance(job_offer_data, Response):
+        # Si se obtuvo una respuesta de error, retornar directamente esa respuesta
+        return job_offer_data
+
+    # Valida que la oferta de trabajo pertenezca a la compañia del usuario autenticado
+    validation_response = validate_user_is_creator(job_offer_data.company, request.user)
+
+    # Verifica si hay errores en la validacion
+    if validation_response:
+        # Retorna la respuesta de error
+        return validation_response
+
+    # Obtiene la lista de postulaciones de la solicitud
+    postulations = request.data
+
+    # Itera sobre cada postulación en la lista
+    for postulation in postulations:
+        # Valida que el ID de la postulación tenga el formato valido
+        validation_response = validate_uuid(postulation.get('id'))
+
+        # Verifica si hay errores en la validacion
+        if validation_response:
+            # Retorna la respuesta de error
+            return validation_response
+
+        # Obtiene los datos de la postulación
+        postulation_data = get_model_data(Postulation, 'id', postulation.get('id'))
+
+        # Verifica si se obtuvo una respuesta de error en lugar de los datos
+        if isinstance(postulation_data, Response):
+            # Si se obtuvo una respuesta de error, retornar directamente esa respuesta
+            return postulation_data
+
+        # Obtiene la acción (aceptar o rechazar) de la solicitud
+        action = postulation.get('status')
+
+        # Verifica que la acción sea válida
+        if action not in ['accept', 'reject']:
+            return Response({
+                'status': 'error',
+                'message': 'Invalid action. Action must be "accept" or "reject".'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Actualiza el estado de la postulación
+        postulation_data.status = 'accepted' if action == 'accept' else 'rejected'
+        postulation_data.save()
+
+    # Respuesta exitosa al aceptar o rechazar las postulaciones
+    return Response({
+        'status': 'success',
+        'message': 'Postulations status successfully applied.'
     }, status=status.HTTP_200_OK)

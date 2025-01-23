@@ -737,7 +737,7 @@ GET /api/job_offers/get/<job_offer_id>
 
 | Query Params     | Tipo     | Descripción                |
 | :--------------- | :------- | :------------------------- |
-| `job_offer_id`       | `string` | **Requerid**. Uuid de la oferta de trabajo |
+| `job_offer_id`       | `string` | **Requerido**. Uuid de la oferta de trabajo |
 
 ##### Ejemplo de solicitud
 
@@ -1006,7 +1006,7 @@ PUT /api/job_offers/update/<job_offer_id>
 
 | Query Params     | Tipo     | Descripción                |
 | :--------------- | :------- | :------------------------- |
-| `job_offer_id`       | `string` | **Requerid**. Uuid de la oferta de trabajo |
+| `job_offer_id`       | `string` | **Requerido**. Uuid de la oferta de trabajo |
 
 ##### Parámetros
 
@@ -1071,7 +1071,7 @@ PUT /api/job_offers/close/<job_offer_id>
 
 | Query Params     | Tipo     | Descripción                |
 | :--------------- | :------- | :------------------------- |
-| `job_offer_id`       | `string` | **Requerid**. Uuid de la oferta de trabajo |
+| `job_offer_id`       | `string` | **Requerido**. Uuid de la oferta de trabajo |
 
 ##### Ejemplo de solicitud
 
@@ -1110,7 +1110,7 @@ DELETE /api/job_offers/delete/<job_offer_id>
 
 | Query Params     | Tipo     | Descripción                |
 | :--------------- | :------- | :------------------------- |
-| `job_offer_id`       | `string` | **Requerid**. Uuid de la oferta de trabajo |
+| `job_offer_id`       | `string` | **Requerido**. Uuid de la oferta de trabajo |
 
 ##### Ejemplo de solicitud
 
@@ -1140,6 +1140,7 @@ Content-Type: application/json
 | [Postularse a una oferta de trabajo](#postularse-a-una-oferta-de-trabajo) | `POST` | `/api/postulations/postulate/<job_offer_id>` | Endpoint para postularse a una oferta de trabajo en la API. |
 | [Retirar postulación a una oferta de trabajo](#retirar-postulación-a-una-oferta-de-trabajo) | `DELETE` | `/api/postulations/withdraw/<job_offer_id>` | Endpoint para retirar la postulación a una oferta de trabajo en la API. |
 | [Obtener postulaciones a una oferta de trabajo](#obtener-postulaciones-a-una-oferta-de-trabajo) | `GET` | `/api/postulations/get/<job_offer_id>` | Endpoint para obtener las postulaciones a una oferta de trabajo en la API. |
+| [Aceptar o rechazar postulaciones a una oferta de trabajo](#aceptar-o-rechazar-postulaciones-a-una-oferta-de-trabajo) | `POST` | `/api/postulations/accept_reject/<job_offer_id>` | Endpoint para aceptar o rechazar postulaciones a una oferta de trabajo en la API. |
 
 #### Postularse a una oferta de trabajo
 
@@ -1159,7 +1160,7 @@ POST /api/postulations/postulate/<job_offer_id>
 
 | Query Params     | Tipo     | Descripción                |
 | :--------------- | :------- | :------------------------- |
-| `job_offer_id`       | `string` | **Requerid**. Uuid de la oferta de trabajo |
+| `job_offer_id`       | `string` | **Requerido**. Uuid de la oferta de trabajo |
 
 ##### Ejemplo de solicitud
 
@@ -1198,7 +1199,7 @@ DELETE /api/postulations/withdraw/<job_offer_id>
 
 | Query Params     | Tipo     | Descripción                |
 | :--------------- | :------- | :------------------------- |
-| `job_offer_id`       | `string` | **Requerid**. Uuid de la oferta de trabajo |
+| `job_offer_id`       | `string` | **Requerido**. Uuid de la oferta de trabajo |
 
 ##### Ejemplo de solicitud
 
@@ -1237,7 +1238,7 @@ GET /api/postulations/get/<job_offer_id>
 
 | Query Params     | Tipo     | Descripción                |
 | :--------------- | :------- | :------------------------- |
-| `job_offer_id`   | `string` | **Requerid**. Uuid de la oferta de trabajo |
+| `job_offer_id`   | `string` | **Requerido**. Uuid de la oferta de trabajo |
 | `size_value`     | `int`    | **Opcional**. Valor del tamaño de elementos por página |
 | `page_value`     | `int`    | **Opcional**. Valor de la página para navegar entre la paginación |
 
@@ -1306,6 +1307,68 @@ Content-Type: application/json
       }
     ]
   }
+}
+```
+
+#### Aceptar o rechazar postulaciones a una oferta de trabajo
+
+##### Método HTTP
+
+```http
+POST /api/postulations/accept_reject/<job_offer_id>
+```
+
+##### Headers
+
+| Header           | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Query Params
+
+| Query Params     | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `job_offer_id`   | `string` | **Requerido**. Uuid de la oferta de trabajo |
+
+##### Parámetros
+
+| Parametro        | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `id`   | `string` | **Requerido**. Id de la postulación a la oferta de trabajo |
+| `status`   | `string` | **Requerido**. Estado de la postulación |
+
+> **NOTA**: El parámetro `status` solo acepta los siguientes valores:
+>
+> - **accept**: Indica que la postulacion a la oferta de trabajo fue acetada.
+> - **reject**: Indica que la postulacion a la oferta de trabajo fue rechazada.
+
+##### Ejemplo de solicitud
+
+```http
+Authorization: Token your_token_key
+Content-Type: application/json
+
+[
+  {
+    "id": "student_id_1",
+    "status": "accept"
+  },
+  {
+    "id": "student_id_2",
+    "status": "reject"
+  }
+]
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "status": "success",
+  "message": "Postulations updated successfully."
 }
 ```
 
