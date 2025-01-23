@@ -1139,6 +1139,7 @@ Content-Type: application/json
 |:------ | :----- | :-- | :---------- |
 | [Postularse a una oferta de trabajo](#postularse-a-una-oferta-de-trabajo) | `POST` | `/api/postulations/postulate/<job_offer_id>` | Endpoint para postularse a una oferta de trabajo en la API. |
 | [Retirar postulación a una oferta de trabajo](#retirar-postulación-a-una-oferta-de-trabajo) | `DELETE` | `/api/postulations/withdraw/<job_offer_id>` | Endpoint para retirar la postulación a una oferta de trabajo en la API. |
+| [Obtener postulaciones a una oferta de trabajo](#obtener-postulaciones-a-una-oferta-de-trabajo) | `GET` | `/api/postulations/get/<job_offer_id>` | Endpoint para obtener las postulaciones a una oferta de trabajo en la API. |
 
 #### Postularse a una oferta de trabajo
 
@@ -1215,6 +1216,96 @@ Content-Type: application/json
 {
   "status": "success",
   "message": "Postulation withdrawn successfully."
+}
+```
+
+#### Obtener postulaciones a una oferta de trabajo
+
+##### Método HTTP
+
+```http
+GET /api/postulations/get/<job_offer_id>
+```
+
+##### Headers
+
+| Header           | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `Authorization`  | `string` | **Requerido**. Token de autenticación del usuario |
+
+##### Query Params
+
+| Query Params     | Tipo     | Descripción                |
+| :--------------- | :------- | :------------------------- |
+| `job_offer_id`   | `string` | **Requerid**. Uuid de la oferta de trabajo |
+| `size_value`     | `int`    | **Opcional**. Valor del tamaño de elementos por página |
+| `page_value`     | `int`    | **Opcional**. Valor de la página para navegar entre la paginación |
+
+> **NOTA**: Si los parámetros `page_size` y `page` no se incluyen en la URL, se aplicarán valores por defecto:
+>
+> - **Ejemplo**: `GET /api/job_offers/all`
+>   - **page_size** será `10`, lo que significa que se mostrarán 10 elementos por página.
+>   - **page** será `1`, comenzando en la primera página de la paginación.
+>
+> **Recomendación**: Para navegar entre las páginas, debe incluir el parámetro `page` e indicar el número de la página a la que desea acceder.
+
+##### Ejemplo de solicitud
+
+```http
+Authorization: Token your_token_key
+Content-Type: application/json
+```
+
+##### Ejemplo de respuesta exitosa
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "status": "success",
+  "message": "The job offers were successfully obtained.",
+  "data": {
+    "page_info": {
+      "count": 1,
+      "page_size": 10,
+      "links": {
+        "next": null,
+        "previous": null
+      }
+    },
+    "postulations": [
+      {
+        "id": 1,
+        "student": {
+          "id": 1,
+          "university": "Test University",
+          "degree": "Test Degree",
+          "major": "Test Major",
+          "graduation_year": 2025,
+          "professional_experience": "Test Experience",
+          "about_me": "Test About Me",
+          "cv": "https://res.cloudinary.com/dccnkrmty/image/upload/v1736292828/miniature-adventure/students_cvs/test_cv.pdf",
+          "user": 1
+        },
+        "job_offer": {
+          "id": "a23cbcc5-6a30-4008-bcef-4536414e744f",
+          "title": "Test Job Offer",
+          "description": "Test Description",
+          "requirements": "Test Requirement",
+          "location": "Test Location",
+          "work_mode": "hybrid",
+          "salary": "50000.00",
+          "is_closed": false,
+          "company": 1,
+          "created_at": "2025-01-17T00:54:21.582748Z",
+          "updated_at": "2025-01-17T00:54:21.582789Z"
+        },
+        "created_at": "2025-01-17T00:54:21.582748Z",
+        "updated_at": "2025-01-17T00:54:21.582789Z"
+      }
+    ]
+  }
 }
 ```
 
